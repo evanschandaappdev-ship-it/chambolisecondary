@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile & Performance - Chamboli Portal</title>
+    <link rel="stylesheet" href="responsive.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: #f4f7f6; min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+        
+        nav { 
+            min-height: 85px; 
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95)); 
+            color: white; display: flex; align-items: center; justify-content: space-between; padding: 10px 5%;
+            position: relative; z-index: 100;
+        }
+        .logo { font-size: 24px; font-weight: 800; background: linear-gradient(45deg, #ffffff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-links a { color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { background: rgba(0, 140, 255, 0.25); transform: translateY(-1px); }
+
+        main { flex: 1; padding: 30px 5%; max-width: 1000px; margin: 0 auto; width: 100%; }
+        
+        .profile-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+        .profile-header { display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; flex-wrap: wrap; }
+        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #008cff; object-fit: cover; }
+        .profile-info { flex: 1; }
+        .profile-info h2 { color: #001e46; font-size: 24px; font-weight: 800; }
+        .profile-info p { color: #64748b; font-size: 14px; font-weight: 600; }
+
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .meta-box { background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .meta-box span { display: block; font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+        .meta-box strong { font-size: 16px; color: #001e46; margin-top: 4px; display: block; }
+
+        .section-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+        .section-title { font-size: 18px; font-weight: 800; color: #001e46; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #334155; font-weight: 700; }
+
+        .grade-badge { padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 12px; display: inline-block; }
+        .grade-pass { background: #dcfce7; color: #15803d; }
+        .grade-warn { background: #fef9c3; color: #a16207; }
+
+        .remarks-box { background: #f0f7ff; border-left: 4px solid #008cff; padding: 15px; border-radius: 6px; margin-top: 15px; }
+        .remarks-box h4 { font-size: 14px; color: #001e46; margin-bottom: 5px; }
+        .remarks-box p { font-size: 13px; color: #334155; line-height: 1.5; }
+
+        .btn-download { padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; transition: all 0.2s ease; float: right; }
+        .btn-download:hover { background: #0d9668; }
+
+        footer { margin-top: auto; background-color: #001e46; color: white; padding: 20px 5%; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <div class="nav-links">
+            <a href="student-profile.html" class="active">My Performance Profile</a>
+            <a href="profile.html">Edit Account</a>
+            <a href="results_3.html">Results Feed</a>
+        </div>
+    </nav>
+
+    <main>
+        <button class="btn-download" id="downloadPdfBtn">Export Summary (PDF)</button>
+        
+        <div id="pdfContent">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <img id="studentAvatar" src="https://ui-avatars.com/api/?name=Student&background=008cff&color=fff&size=128" class="profile-avatar" alt="Avatar">
+                    <div class="profile-info">
+                        <h2 id="studentName">Loading Name...</h2>
+                        <p id="studentEmail">student@chamboli.edu.zm</p>
+                    </div>
+                </div>
+
+                <div class="meta-grid">
+                    <div class="meta-box">
+                        <span>Assigned Class</span>
+                        <strong id="assignedClass">--</strong>
+                    </div>
+                    <div class="meta-box">
+                        <span>Class Teacher</span>
+                        <strong id="classTeacher">Loading...</strong>
+                    </div>
+                    <div class="meta-box">
+                        <span>Attendance Rate</span>
+                        <strong id="attendanceRate">--%</strong>
+                    </div>
+                    <div class="meta-box">
+                        <span>General Conduct</span>
+                        <strong id="studentConduct">Satisfactory</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">Academic Performance Overview</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Score</th>
+                            <th>Grade</th>
+                            <th>Teacher Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceTableBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #64748b;">Loading performance data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">Class Teacher Remarks & Recommendation</div>
+                <div class="remarks-box">
+                    <h4 id="classTeacherNameHeader">Class Teacher Commentary</h4>
+                    <p id="overallTeacherRemark">Loading teacher remarks...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div>&copy; 2026 Chamboli High School Student Portal</div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let studentData = null;
+
+        async function verifyPermanentDeleteCondition(student) {
+            if (!student) return false;
+            const cls = (student.assignedClass || "").toLowerCase().trim();
+            if (cls.includes("form 7") || cls.includes("form7") || cls.includes("grade 13") || cls.includes("grade13")) {
+                alert(`NOTICE: Permanent account deletion triggered because student reached Form 7 / Grade 13.`);
+                try {
+                    await deleteDoc(doc(db, "students", student.uid));
+                } catch (e) {
+                    console.error("Deletion error:", e);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
+
+            const snap = await getDoc(doc(db, "students", user.uid));
+            if (snap.exists()) {
+                studentData = { uid: snap.id, ...snap.data() };
+                
+                if (await verifyPermanentDeleteCondition(studentData)) {
+                    window.location.href = "signin.html";
+                    return;
+                }
+
+                populateProfileInfo(studentData);
+                await fetchClassTeacher(studentData.assignedClass);
+                renderPerformanceRecords(studentData.testRecords || []);
+            } else {
+                alert("Student profile not found.");
+            }
+        });
+
+        function populateProfileInfo(data) {
+            const name = data.name || "Student User";
+            document.getElementById("studentName").innerText = name;
+            document.getElementById("studentEmail").innerText = data.email || "";
+            document.getElementById("assignedClass").innerText = data.assignedClass || "Unassigned";
+            document.getElementById("attendanceRate").innerText = data.attendance || "95% (45/48 Days)";
+            document.getElementById("studentConduct").innerText = data.conduct || "Good & Satisfactory";
+            
+            const avatarUrl = data.photoURL || data.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=008cff&color=fff&size=128`;
+            document.getElementById("studentAvatar").src = avatarUrl;
+
+            document.getElementById("overallTeacherRemark").innerText = data.generalRemark || `${name} is showing steady progress across subjects. Regular practice in weaker areas is advised for upcoming terms.`;
+        }
+
+        async function fetchClassTeacher(assignedClass) {
+            if (!assignedClass) {
+                document.getElementById("classTeacher").innerText = "Not Assigned";
+                return;
+            }
+
+            try {
+                const q = query(collection(db, "teachers"), where("assignedClass", "==", assignedClass));
+                const querySnap = await getDocs(q);
+                if (!querySnap.empty) {
+                    const teacherDoc = querySnap.docs[0].data();
+                    const teacherName = teacherDoc.name || teacherDoc.fullName || "Class Teacher";
+                    document.getElementById("classTeacher").innerText = teacherName;
+                    document.getElementById("classTeacherNameHeader").innerText = `Commentary by ${teacherName}`;
+                } else {
+                    document.getElementById("classTeacher").innerText = "TBD";
+                }
+            } catch (err) {
+                console.error("Error fetching teacher info:", err);
+                document.getElementById("classTeacher").innerText = "Teacher Info Unavailable";
+            }
+        }
+
+        function renderPerformanceRecords(records) {
+            const tbody = document.getElementById("performanceTableBody");
+            tbody.innerHTML = "";
+
+            if (!records || records.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b;">No test performance records recorded yet.</td></tr>`;
+                return;
+            }
+
+            records.forEach(r => {
+                const score = parseFloat(r.score || 0);
+                const grade = score >= 75 ? "Distinction (1)" : score >= 50 ? "Credit (5)" : "Satisfactory (7)";
+                const remark = r.remark || (score >= 50 ? "Demonstrates good understanding." : "Needs targeted revision.");
+                
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${r.subject || 'Subject'}</strong></td>
+                    <td>${score}%</td>
+                    <td><span class="grade-badge ${score >= 50 ? 'grade-pass' : 'grade-warn'}">${grade}</span></td>
+                    <td>${remark}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById("downloadPdfBtn").addEventListener("click", () => {
+            const element = document.getElementById("pdfContent");
+            const opt = {
+                margin: 8,
+                filename: `Student_Profile_${studentData ? studentData.name.replace(/\s+/g, '_') : 'Report'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        });
+    </script>
+</body>
+</html>

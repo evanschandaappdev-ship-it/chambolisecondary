@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Sign In - Chamboli Portal</title>
+    <link rel="stylesheet" href="responsive.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            animation: pageOpen 1s ease;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        @keyframes pageOpen {
+            from {
+                opacity: 0;
+                transform: scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            background-image: url("school1.jpg");
+        }
+
+        nav {
+            min-height: 85px;
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ffffff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+            background: rgba(0, 140, 255, 0.25);
+            border-color: rgba(0, 140, 255, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 85px;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, rgba(0, 30, 70, 0.98), rgba(0, 60, 120, 0.98));
+                padding: 20px;
+                gap: 15px;
+                border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            z-index: 1;
+        }
+
+        .auth-container {
+            max-width: 450px;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 8px;
+            color: #0f172a;
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .auth-container p {
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #008cff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #001e46, #003c78);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #0056b3;
+        }
+
+        .btn-submit:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .auth-bottom-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .auth-bottom-link a {
+            color: #008cff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-bottom-link a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #001e46;
+            color: white;
+            text-align: center;
+            padding: 25px 5%;
+            margin-top: auto;
+            font-size: 14px;
+            border-top: 3px solid #008cff;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slideshow"></div>
+
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <button class="menu-toggle" id="mobileMenuBtn">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="navContainer">
+            <a href="index.html">Home</a>
+            <a href="signin.html">Student Hub</a>
+            <a href="register.html">Student Register</a>
+            <a href="teacher-signin.html" class="active">Teacher Workspace</a>
+            <a href="create-account.html">Teacher Setup</a>
+            <a href="headteacher-signin.html">Executive Portal</a>
+            <a href="headteacher-register.html">Executive Setup</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="auth-container">
+            <h2>Teacher Sign In</h2>
+            <p>Access your teaching workspace and manage grades.</p>
+            <form id="teacherSigninForm">
+                <div class="form-group">
+                    <label for="email">Work Email</label>
+                    <input type="email" id="email" required placeholder="Enter work email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
+                </div>
+                <div class="form-group">
+                    <label for="passKey">Passkey Security Code</label>
+                    <input type="password" id="passKey" required placeholder="Enter faculty passkey">
+                </div>
+                <button type="submit" id="submitBtn" class="btn-submit">Sign In</button>
+            </form>
+
+            <div class="auth-bottom-link">
+                Don't have a teacher account? <a href="create-account.html">Create One Here</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 Chamboli Portal. All rights reserved.
+    </footer>
+
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164",
+            measurementId: "G-PZZP7V0G4W"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const navContainer = document.getElementById("navContainer");
+        if (mobileMenuBtn && navContainer) {
+            mobileMenuBtn.addEventListener("click", () => {
+                navContainer.classList.toggle("active");
+            });
+        }
+
+        const form = document.getElementById("teacherSigninForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Authenticating...";
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const passKeyInput = document.getElementById("passKey").value.trim();
+
+            try {
+                // Fetch valid system passkey directly from passkey collection
+                const passkeySnap = await getDocs(collection(db, "pass-keys"));
+                let validPasskey = null;
+                passkeySnap.forEach(d => {
+                    const data = d.data();
+                    if (data["pass-key"] || data.passkey || data.passKey) {
+                        validPasskey = data["pass-key"] || data.passkey || data.passKey;
+                    }
+                });
+
+                if (!validPasskey || passKeyInput !== validPasskey) {
+                    alert("Access Denied: Invalid Security Passkey.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Sign In";
+                    return;
+                }
+
+                const creds = await signInWithEmailAndPassword(auth, email, password);
+
+                let teacherDoc;
+                try {
+                    teacherDoc = await getDocFromServer(doc(db, "teachers", creds.user.uid));
+                } catch (err) {
+                    teacherDoc = await getDoc(doc(db, "teachers", creds.user.uid));
+                }
+
+                if (teacherDoc.exists()) {
+                    const data = teacherDoc.data();
+                    if (data.status === "Pending") {
+                        alert("Access Denied: Your staff account is awaiting executive Headteacher verification.");
+                        await auth.signOut();
+                    } else {
+                        alert("Successfully Authenticated Staff Account!");
+                        window.location.href = "teacher-dashboard.html";
+                    }
+                } else {
+                    alert("No corresponding teacher credentials map inside this catalog.");
+                    await auth.signOut();
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Sign-in error: " + (error.message || "Invalid email or security credentials."));
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Sign In";
+            }
+        });
+    </script>
+</body>
+
+</html>

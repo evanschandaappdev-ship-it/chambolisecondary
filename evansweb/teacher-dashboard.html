@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="responsive_2.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Workspace - Chamboli Portal</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: var(--bg-color, #f4f7f6); color: var(--text-primary, #001e46); min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+        
+        nav { 
+            min-height: 70px; 
+            background: var(--nav-bg, linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95))); 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 10px 5%; 
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); 
+        }
+        .logo { font-size: 22px; font-weight: 800; color: #ffffff; }
+        
+        .nav-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 8px; background: rgba(255,255,255,0.05); transition: all 0.3s ease; }
+        .nav-links a.active { background: rgba(0, 140, 255, 0.4); color: white; }
+        .nav-links a:hover { transform: translateY(-1px); background: rgba(255,255,255,0.15); }
+        
+        .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: transparent; border: none; }
+        .menu-toggle span { display: block; width: 25px; height: 3px; background-color: white; border-radius: 2px; }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; }
+            .nav-links { 
+                display: none; 
+                flex-direction: column; 
+                position: absolute; 
+                top: 70px; 
+                left: 0; 
+                width: 100%; 
+                background: #001e46; 
+                padding: 15px; 
+                gap: 10px; 
+            }
+            .nav-links.active { display: flex; animation: fadeIn 0.3s ease-out; }
+        }
+
+        main { flex: 1; padding: 20px 4%; width: 100%; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.5s ease-out; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: var(--card-bg, white); padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border-left: 4px solid #008cff; transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+        .stat-card h3 { font-size: 12px; color: var(--text-secondary, #64748b); text-transform: uppercase; }
+        .stat-card p { font-size: 22px; font-weight: 800; color: var(--text-primary, #001e46); margin-top: 4px; }
+
+        .section-card { background: var(--card-bg, white); padding: 20px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; }
+        h2 { color: var(--text-primary, #001e46); font-size: 18px; font-weight: 700; }
+        
+        .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%; }
+        .search-box { flex: 1; min-width: 180px; padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 13px; outline: none; background: var(--card-bg, white); color: var(--text-primary, black); transition: border-color 0.2s; }
+        .search-box:focus { border-color: #008cff; }
+
+        .btn-action-main { padding: 8px 14px; background: #008cff; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.2s ease; }
+        .btn-action-main:hover { background: #0076d6; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,140,255,0.3); }
+
+        .ops-badge { font-size: 11px; background: rgba(0,140,255,0.15); color: #008cff; padding: 6px 10px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(0,140,255,0.3); font-weight: 700; }
+
+        .table-wrapper { overflow-x: auto; width: 100%; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 100%; background: var(--card-bg, white); }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-color, #e2e8f0); vertical-align: middle; transition: background 0.2s; color: var(--text-primary, inherit); }
+        tr:hover td { background: var(--table-row-hover, #f8fafc); }
+        th { background-color: var(--table-header-bg, #f8fafc); color: var(--text-primary, #334155); font-weight: 700; }
+        
+        .student-profile-cell { display: flex; align-items: center; gap: 10px; }
+        .student-avatar { 
+            width: 38px; 
+            height: 38px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 2px solid #008cff; 
+            background-color: #e2e8f0; 
+            cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .student-avatar:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px rgba(0, 140, 255, 0.4);
+        }
+        
+        .action-btn { padding: 6px 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px; margin-right: 4px; transition: all 0.2s ease; }
+        .action-btn:hover { transform: translateY(-1px); }
+        .btn-approve { background-color: #10b981; color: white; }
+        .btn-disable { background-color: #f59e0b; color: white; }
+        .btn-delete { background-color: #ef4444; color: white; }
+        .btn-delete:hover { background-color: #dc2626; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 15px; animation: fadeIn 0.3s ease-out; }
+        .modal-content { background: var(--card-bg, white); color: var(--text-primary, black); padding: 20px; border-radius: 12px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .close-modal { font-size: 20px; cursor: pointer; color: var(--text-secondary, #64748b); }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-primary, #334155); margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 13px; background-color: var(--card-bg, white); color: var(--text-primary, black); outline: none; transition: border-color 0.2s; }
+        .form-control:focus { border-color: #008cff; }
+
+        .img-modal-content { background: transparent; text-align: center; max-width: 320px; }
+        .img-modal-content img { width: 220px; height: 220px; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+
+        footer { margin-top: auto; background-color: #001e46; color: white; padding: 15px 5%; font-size: 12px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Teacher Workspace</div>
+        <button class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></button>
+        <div class="nav-links" id="navLinks">
+            <a href="teacher-dashboard_5.html" class="active">Workspace</a>
+            <a href="student-list_4.html">Student List</a>
+            <a href="class-register_4.html">Attendance</a>
+            <a href="attendance-insights_4.html">Logs</a>
+            <a href="input-marks_2.html">Input Marks</a>
+            <a href="results_5.html">Results Feed</a>
+            <a href="teacher-chat_2.html">Chat Hub</a>
+            <button class="theme-toggle-btn" id="themeToggleBtn">🌙 Dark Mode</button>
+            <a href="#" class="logout-btn" id="logoutBtn" style="color: #ef4444;">Sign Out</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Assigned Class</h3>
+                <p id="assignedClassDisplay">---</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Students</h3>
+                <p id="totalStudentsCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Reads/Writes Ops Unit</h3>
+                <p id="opsDisplay">0.00 Unit</p>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Classroom Student Management</h2>
+                <button id="toggleOpsBtn" class="ops-badge">Ops Unit Mode: OFF (60k=1)</button>
+            </div>
+            <div class="header-actions">
+                <input type="text" class="search-box" id="studentSearch" placeholder="🔍 Search student name...">
+                <button class="btn-action-main" id="openAddModalBtn">+ Add Student</button>
+                <a href="input-marks_2.html" class="btn-action-main" style="background:#10b981;">📝 Record Marks</a>
+            </div>
+
+            <div class="table-wrapper" style="margin-top: 15px;">
+                <table class="teacher-student-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Phone Number</th>
+                            <th>Email Address</th>
+                            <th>Class/Stream</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <tr><td colspan="6" style="text-align:center; padding:20px;">Loading student roster...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Register New Student -->
+    <div class="modal" id="addStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Register New Student</h3>
+                <span class="close-modal" id="closeAddModal">&times;</span>
+            </div>
+            <form id="addStudentForm">
+                <div class="form-group">
+                    <label>Full Student Name</label>
+                    <input type="text" class="form-control" id="mName" required placeholder="e.g. Dickson Mulenga">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" class="form-control" id="mPhone" required placeholder="e.g. 0971234567">
+                </div>
+                <div class="form-group">
+                    <label for="mClassSelect">Select Class & Stream</label>
+                    <select id="mClassSelect" class="form-control" required>
+                        <option value="" disabled selected>-- Choose Class & Stream --</option>
+                        <option value="Form 1 C">Form 1 C</option>
+                        <option value="Form 1 H">Form 1 H</option>
+                        <option value="Grade 10 C">Grade 10 C</option>
+                        <option value="Grade 12 C">Grade 12 C</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Account Password</label>
+                    <input type="password" class="form-control" id="mPassword" required minlength="6" placeholder="••••••••">
+                </div>
+
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--border-color, #e2e8f0);">
+                <h4 style="font-size: 13px; margin-bottom: 10px;">🛡️ Account Security Questions</h4>
+
+                <div class="form-group">
+                    <label for="mSecQ1">Security Question 1</label>
+                    <select id="mSecQ1" class="form-control" required>
+                        <option value="" disabled selected>Select Question 1...</option>
+                        <option value="What was the name of your first primary school?">What was the name of your first primary school?</option>
+                        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                    </select>
+                    <input type="text" class="form-control" id="mSecA1" required placeholder="Answer to Question 1" style="margin-top: 6px;">
+                </div>
+
+                <button type="submit" class="btn-action-main" style="width: 100%; margin-top: 10px;">Register Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Profile Picture Preview -->
+    <div class="modal" id="imgPreviewModal">
+        <div class="modal-content img-modal-content">
+            <img id="enlargedImage" src="" alt="Student Profile Picture">
+            <p id="enlargedStudentName" style="color:white; margin-top:12px; font-weight:bold; font-size:16px;"></p>
+            <button id="closeImgModal" style="margin-top:15px; padding:6px 16px; background:#ef4444; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Close</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Chamboli Secondary School. All rights reserved.</p>
+    </footer>
+
+    <script src="theme-toggle.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentTeacher = null;
+        let convertOps = false;
+        let dbOpsCount = 60000;
+
+        const toggleBtn = document.getElementById("toggleOpsBtn");
+        toggleBtn.addEventListener("click", () => {
+            convertOps = !convertOps;
+            toggleBtn.innerText = `Ops Unit Mode: ${convertOps ? 'ON' : 'OFF'} (60k=1)`;
+            updateOpsDisplay();
+        });
+
+        function formatOpsCount(count) {
+            if (!convertOps) return `${count} ops`;
+            const units = count / 60000;
+            return `${units.toFixed(2)} Ops Unit(s)`;
+        }
+
+        function updateOpsDisplay() {
+            document.getElementById("opsDisplay").innerText = formatOpsCount(dbOpsCount);
+        }
+
+        updateOpsDisplay();
+
+        document.getElementById("menuToggle").onclick = () => {
+            document.getElementById("navLinks").classList.toggle("active");
+        };
+
+        const modal = document.getElementById("addStudentModal");
+        document.getElementById("openAddModalBtn").onclick = () => modal.style.display = "flex";
+        document.getElementById("closeAddModal").onclick = () => modal.style.display = "none";
+
+        const imgModal = document.getElementById("imgPreviewModal");
+        document.getElementById("closeImgModal").onclick = () => imgModal.style.display = "none";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "teacher-signin.html";
+                return;
+            }
+
+            const teacherDoc = await getDoc(doc(db, "teachers", user.uid));
+            if (teacherDoc.exists()) {
+                currentTeacher = teacherDoc.data();
+                document.getElementById("assignedClassDisplay").innerText = currentTeacher.assignedClass || "All Classes";
+            }
+            listenStudents();
+        });
+
+        function listenStudents() {
+            onSnapshot(collection(db, "students"), (snapshot) => {
+                const tbody = document.getElementById("studentTableBody");
+                tbody.innerHTML = "";
+
+                let count = 0;
+                const searchVal = document.getElementById("studentSearch").value.toLowerCase();
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px;">No students registered yet.</td></tr>`;
+                    return;
+                }
+
+                snapshot.forEach(docSnap => {
+                    const s = docSnap.data();
+                    const rawName = s.name || s.fullName || s.displayName;
+                    const studentName = (rawName && rawName.trim() !== "") ? rawName : 'Unnamed Student';
+
+                    if (searchVal && !studentName.toLowerCase().includes(searchVal)) return;
+
+                    count++;
+                    const tr = document.createElement("tr");
+                    const avatarUrl = s.profilePicUrl || 'https://via.placeholder.com/100';
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="student-profile-cell">
+                                <img src="${avatarUrl}" class="student-avatar" alt="Avatar" data-name="${studentName}" data-url="${avatarUrl}">
+                                <strong>${studentName}</strong>
+                            </div>
+                        </td>
+                        <td><strong>${s.phone || 'N/A'}</strong></td>
+                        <td><code>${s.email || 'N/A'}</code></td>
+                        <td><strong>${s.assignedClass || 'Form 1C'}</strong></td>
+                        <td><span style="color:#10b981; font-weight:700;">${s.status || 'Verified'}</span></td>
+                        <td>
+                            <button class="action-btn btn-disable">Disable</button>
+                            <button class="action-btn btn-delete">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById("totalStudentsCount").innerText = count;
+
+                document.querySelectorAll(".student-avatar").forEach(img => {
+                    img.addEventListener("click", (e) => {
+                        document.getElementById("enlargedImage").src = e.target.dataset.url;
+                        document.getElementById("enlargedStudentName").innerText = e.target.dataset.name;
+                        imgModal.style.display = "flex";
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>

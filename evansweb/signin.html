@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - Chamboli Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            animation: pageOpen 1s ease;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        @keyframes pageOpen {
+            from {
+                opacity: 0;
+                transform: scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            background-image: url("school1.jpg");
+        }
+
+        nav {
+            min-height: 85px;
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 6%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ffffff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: 0.3s;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 30, 70, 0.15);
+            width: 100%;
+            max-width: 420px;
+            margin: auto;
+            border-top: 5px solid #008cff;
+        }
+
+        .form-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #001e46;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #008cff;
+            box-shadow: 0 0 0 3px rgba(0, 140, 255, 0.15);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: #008cff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #0066cc;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 85px;
+                left: 0;
+                background: rgba(0, 30, 70, 0.98);
+                padding: 15px 6%;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slideshow"></div>
+
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <div class="nav-links" id="navContainer">
+            <a href="index.html">Home</a>
+            <a href="signin.html" class="active">Student Login</a>
+            <a href="signup.html">Student Register</a>
+            <a href="teacher-signin.html">Teacher Portal</a>
+            <a href="headteacher-signin.html">Head Teacher</a>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <div class="form-title">Student Portal Access</div>
+
+        <form id="studentLoginForm">
+            <div class="input-group">
+                <label for="loginIdentifier">Email Address or Phone Number</label>
+                <input type="text" id="loginIdentifier" required placeholder="student@chamboli.edu.zm or 0971234567">
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">Sign In</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164",
+            measurementId: "G-PZZP7V0G4W"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        enableIndexedDbPersistence(db).catch(() => { });
+
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const navContainer = document.getElementById("navContainer");
+        if (mobileMenuBtn && navContainer) {
+            mobileMenuBtn.addEventListener("click", () => {
+                navContainer.classList.toggle("active");
+            });
+        }
+
+        document.getElementById("studentLoginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Authenticating Session...";
+
+            const identifier = document.getElementById("loginIdentifier").value.trim();
+            const password = document.getElementById("password").value;
+
+            try {
+                let targetEmail = identifier;
+
+                // Check if input is phone number (not an email)
+                if (!identifier.includes("@")) {
+                    const qPhone = query(collection(db, "students"), where("phone", "==", identifier));
+                    const qParent = query(collection(db, "students"), where("parentLine", "==", identifier));
+                    
+                    let snap = await getDocs(qPhone);
+                    if (snap.empty) snap = await getDocs(qParent);
+
+                    if (!snap.empty) {
+                        targetEmail = snap.docs[0].data().email;
+                    } else {
+                        throw new Error("No student account found associated with this phone number.");
+                    }
+                }
+
+                await signInWithEmailAndPassword(auth, targetEmail.toLowerCase(), password);
+                alert("Successfully Signed In!");
+                window.location.href = "profile.html";
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "Invalid credentials or portal password verification failed.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Sign In";
+            }
+        });
+    </script>
+</body>
+
+</html>

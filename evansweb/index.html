@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamboli High School Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            animation: pageOpen 1s ease;
+            overflow-x: hidden;
+            background-color: #f4f7f6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        @keyframes pageOpen {
+            from {
+                opacity: 0;
+                transform: scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            animation: slideShow 25s infinite;
+            opacity: 0.15;
+        }
+
+        @keyframes slideShow {
+            0%, 100% {
+                background-image: url("school1.jpg");
+            }
+            25% {
+                background-image: url("school2.jpg");
+            }
+            50% {
+                background-image: url("school3.jpg");
+            }
+            75% {
+                background-image: url("school4.jpg");
+            }
+        }
+
+        nav {
+            min-height: 85px;
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ffffff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+            background: rgba(0, 140, 255, 0.25);
+            border-color: rgba(0, 140, 255, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 85px;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, rgba(0, 30, 70, 0.98), rgba(0, 60, 120, 0.98));
+                padding: 20px;
+                gap: 15px;
+                border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        .hero-section {
+            max-width: 850px;
+            margin: 60px auto 30px auto;
+            text-align: center;
+            padding: 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            color: #001e46;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            color: #475569;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Animated Grid Container */
+        .grid-container {
+            max-width: 1100px;
+            margin: 0 auto 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        /* Enhanced Animated Portal Card */
+        .portal-card {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .portal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 140, 255, 0.1), transparent);
+            transition: 0.6s;
+        }
+
+        .portal-card:hover::before {
+            left: 100%;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 22px 45px rgba(0, 60, 120, 0.18);
+            border-color: rgba(0, 140, 255, 0.5);
+        }
+
+        .card-icon {
+            width: 75px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 30px;
+            margin: 0 auto 20px auto;
+            background: #e0f2fe;
+            color: #003c78;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), background-color 0.3s ease;
+        }
+
+        .portal-card:hover .card-icon {
+            background: linear-gradient(135deg, #003c78, #008cff);
+            color: white;
+            transform: rotateY(360deg) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 140, 255, 0.3);
+        }
+
+        .portal-card h3 {
+            font-size: 20px;
+            color: #001e46;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .portal-card p {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Animated Info Cards Section */
+        .info-container {
+            max-width: 1100px;
+            margin: 0 auto 60px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 35px 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 30, 70, 0.1);
+            border-color: rgba(0, 140, 255, 0.3);
+        }
+
+        .info-card h2 {
+            font-size: 22px;
+            color: #001e46;
+            margin-bottom: 15px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .info-card p {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .sub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sub-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sub-box:hover {
+            background: #ffffff;
+            border-color: #008cff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 140, 255, 0.08);
+        }
+
+        .sub-box h4 {
+            color: #003c78;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .sub-box ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Stream Tag Styling & Animation */
+        .stream-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            background: #e0f2fe;
+            color: #003c78;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid #bae6fd;
+            transition: all 0.25s ease;
+            cursor: default;
+        }
+
+        .tag:hover {
+            background: #008cff;
+            color: #ffffff;
+            border-color: #008cff;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 140, 255, 0.25);
+        }
+
+        /* Animations Keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        footer {
+            margin-top: auto;
+            background-color: #001e46;
+            color: white;
+            padding: 25px 5%;
+            font-size: 14px;
+            border-top: 3px solid #008cff;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .read-saver-bar {
+            background: rgba(0, 140, 255, 0.15);
+            border: 1px solid rgba(0, 140, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #00d2ff;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slideshow"></div>
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <button class="menu-toggle" id="mobileMenuBtn">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="navContainer">
+            <a href="index.html" class="active">Home</a>
+            <a href="signin.html">Student Hub</a>
+            <a href="register.html">Student Register</a>
+            <a href="teacher-signin.html">Teacher Workspace</a>
+            <a href="create-account.html">Teacher Setup</a>
+            <a href="headteacher-signin.html">Executive Portal</a>
+            <a href="headteacher-register.html">Executive Setup</a>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <h1 id="welcomeHeading">Chamboli Secondary School</h1>
+        <p id="heroSubtext">Welcome to the secure administrative and academic core management network. Select your workspace below to begin.</p>
+    </div>
+
+    <div class="grid-container">
+        <a href="signin.html" class="portal-card" style="animation-delay: 0.1s;">
+            <div class="card-icon">🎓</div>
+            <h3>Student Hub</h3>
+            <p>Access your school profile, view verified score sheets, and chat in the communication hub.</p>
+        </a>
+        <a href="teacher-signin.html" class="portal-card" style="animation-delay: 0.2s;">
+            <div class="card-icon">👩‍🏫</div>
+            <h3>Teacher Workspace</h3>
+            <p>Grade exam papers, take attendance, and manage student validation requests.</p>
+        </a>
+        <a href="headteacher-signin.html" class="portal-card" style="animation-delay: 0.3s;">
+            <div class="card-icon">🏛️</div>
+            <h3>Executive Portal</h3>
+            <p>Verify registration credentials, direct campus structures, and view teacher rosters.</p>
+        </a>
+    </div>
+
+    <!-- Information Sections -->
+    <div class="info-container">
+        <div class="info-card" style="animation-delay: 0.4s;">
+            <h2>🏫 About Chamboli Secondary School</h2>
+            <p>
+                Founded in January 1965 in Kitwe, Copperbelt Province, Chamboli Secondary School carries a rich history of academic excellence and leadership development. The school offers complete secondary education following the Examinations Council of Zambia (ECZ) national curriculum. We foster intellectual growth, creativity, and personal discipline across all junior and senior grade levels.
+            </p>
+        </div>
+
+        <div class="info-card" style="animation-delay: 0.5s;">
+            <h2>📚 Academic Curriculum & Subjects Offered</h2>
+            <p>We provide a comprehensive range of subjects tailored to both national examinations and practical career pathways:</p>
+            <div class="sub-grid">
+                <div class="sub-box">
+                    <h4>Junior Secondary (Forms 1 & 2)</h4>
+                    <ul>
+                        <li>English Language</li>
+                        <li>Mathematics</li>
+                        <li>Sciences</li>
+                        <li>Social Studies</li>
+                        <li>Religious Education</li>
+                        <li>Computer Studies / ICT</li>
+                        <li>Business Studies</li>
+                    </ul>
+                </div>
+                <div class="sub-box">
+                    <h4>Senior Secondary (Grades 10 – 12)</h4>
+                    <ul>
+                        <li>English Language & Literature</li>
+                        <li>Mathematics & Additional Maths</li>
+                        <li>Physics, Chemistry, Biology</li>
+                        <li>Civic Education & History</li>
+                        <li>Geography & Religious Education</li>
+                        <li>Commerce & Principles of Accounts</li>
+                        <li>Agricultural Science</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card" style="animation-delay: 0.6s;">
+            <h2>🏫 Classes & Available Streams</h2>
+            <p>Our academic program spans from Junior Secondary through Senior levels, organized into registered class streams:</p>
+            <div class="sub-grid">
+                <div class="sub-box">
+                    <h4>Form 1 Streams</h4>
+                    <div class="stream-tags">
+                        <span class="tag">Form 1 C</span>
+                        <span class="tag">Form 1 H</span>
+                        <span class="tag">Form 1 A</span>
+                        <span class="tag">Form 1 M</span>
+                        <span class="tag">Form 1 B</span>
+                        <span class="tag">Form 1 O</span>
+                    </div>
+                </div>
+
+                <div class="sub-box">
+                    <h4>Form 2 Streams</h4>
+                    <div class="stream-tags">
+                        <span class="tag">Form 2 C</span>
+                        <span class="tag">Form 2 H</span>
+                        <span class="tag">Form 2 A</span>
+                        <span class="tag">Form 2 M</span>
+                        <span class="tag">Form 2 B</span>
+                        <span class="tag">Form 2 O</span>
+                    </div>
+                </div>
+
+                <div class="sub-box">
+                    <h4>Grade 10 Streams</h4>
+                    <div class="stream-tags">
+                        <span class="tag">Grade 10 C</span>
+                        <span class="tag">Grade 10 H</span>
+                        <span class="tag">Grade 10 A</span>
+                        <span class="tag">Grade 10 M</span>
+                        <span class="tag">Grade 10 B</span>
+                        <span class="tag">Grade 10 O</span>
+                    </div>
+                </div>
+
+                <div class="sub-box">
+                    <h4>Grade 11 Streams</h4>
+                    <div class="stream-tags">
+                        <span class="tag">Grade 11 C</span>
+                        <span class="tag">Grade 11 H</span>
+                        <span class="tag">Grade 11 A</span>
+                        <span class="tag">Grade 11 M</span>
+                        <span class="tag">Grade 11 B</span>
+                        <span class="tag">Grade 11 O</span>
+                    </div>
+                </div>
+
+                <div class="sub-box" style="grid-column: 1 / -1;">
+                    <h4>Grade 12 Streams</h4>
+                    <div class="stream-tags">
+                        <span class="tag">Grade 12 C</span>
+                        <span class="tag">Grade 12 H</span>
+                        <span class="tag">Grade 12 A</span>
+                        <span class="tag">Grade 12 M</span>
+                        <span class="tag">Grade 12 B</span>
+                        <span class="tag">Grade 12 O</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div>
+                © 2026 Chamboli High School Portal | Created by Evans Chanda Jr
+            </div>
+            <div class="read-saver-bar" id="saverWidget">
+                ⚡ online
+            </div>
+        </div>
+    </footer>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDocFromCache, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164",
+            measurementId: "G-PZZP7V0G4W"
+        };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Enable instant offline persistence cache engine (< 0.01s load)
+    enableIndexedDbPersistence(db).catch(() => {});
+
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const navContainer = document.getElementById("navContainer");
+    if (mobileMenuBtn && navContainer) {
+        mobileMenuBtn.addEventListener("click", () => {
+            navContainer.classList.toggle("active");
+        });
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            let name = user.displayName || "User";
+            try {
+                // Read directly from local Firestore cache instantly
+                let studentDoc = await getDocFromCache(doc(db, "students", user.uid));
+                if (studentDoc.exists()) {
+                    name = studentDoc.data().name;
+                } else {
+                    let teacherDoc = await getDocFromCache(doc(db, "teachers", user.uid));
+                    if (teacherDoc.exists()) name = teacherDoc.data().name;
+                }
+            } catch (e) {
+                // Fallback to async Firestore if cache is empty on first boot
+                let studentDoc = await getDoc(doc(db, "students", user.uid)).catch(() => null);
+                if (studentDoc && studentDoc.exists()) {
+                    name = studentDoc.data().name;
+                }
+            }
+            const welcomeHeading = document.getElementById("welcomeHeading");
+            if (welcomeHeading) welcomeHeading.innerText = `Welcome Back, ${name}!`;
+        }
+    });
+</script>
+</body>
+
+</html>

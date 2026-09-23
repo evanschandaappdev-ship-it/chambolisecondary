@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Register - Chamboli Portal</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: #f4f7f6; min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+
+        nav {
+            min-height: 85px;
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 6%;
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+        }
+
+        .logo { font-size: 26px; font-weight: 800; background: linear-gradient(45deg, #ffffff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 8px; transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { color: white; background: rgba(0, 140, 255, 0.25); transform: translateY(-1px); }
+
+        .menu-toggle { display: none; font-size: 26px; background: none; border: none; color: white; cursor: pointer; }
+
+        @media (max-width: 950px) {
+            .menu-toggle { display: block; }
+            .nav-links { 
+                display: none; flex-direction: column; width: 100%; position: absolute; top: 85px; left: 0; 
+                background: rgba(0, 30, 70, 0.98); padding: 20px; border-bottom: 2px solid #008cff; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }
+            .nav-links.active { display: flex; animation: fadeIn 0.3s ease-out; }
+        }
+
+        main { flex: 1; padding: 30px 5%; width: 100%; max-width: 900px; margin: 0 auto; }
+        .register-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border-top: 5px solid #008cff; animation: fadeIn 0.5s ease-out; }
+        
+        .date-selection-box { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1px solid #cbd5e1; margin-bottom: 20px; }
+        .date-selection-box label { font-weight: 700; color: #001e46; font-size: 14px; }
+        .date-selection-box input[type="date"] { padding: 8px 12px; border: 1px solid #94a3b8; border-radius: 6px; font-weight: 600; font-size: 14px; outline: none; }
+
+        .student-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 10px; animation: slideIn 0.3s ease-out; transition: background 0.2s; }
+        .student-row:hover { background: #f8fafc; padding-left: 8px; padding-right: 8px; border-radius: 8px; }
+        .student-info { display: flex; align-items: center; gap: 12px; }
+        .student-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #008cff; transition: transform 0.2s; }
+
+        .radio-options { display: flex; gap: 12px; flex-wrap: wrap; }
+        .radio-options label { font-size: 13px; font-weight: 600; color: #334155; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .radio-options label:hover { color: #008cff; }
+
+        .btn-submit { display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #0072ff, #00c6ff); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 25px; transition: all 0.3s ease; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,114,255,0.3); }
+
+        .ops-badge { font-size: 11px; background: rgba(0,140,255,0.15); color: #008cff; padding: 2px 8px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(0,140,255,0.3); }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <button class="menu-toggle" id="mobileMenuBtn">☰</button>
+        <div class="nav-links" id="navLinksContainer">
+            <a href="teacher-dashboard_3.html">Teacher Workspace</a>
+            <a href="class-register_4.html" class="active">Class Register</a>
+            <a href="student-list_4.html">Student List</a>
+            <a href="attendance-insights_4.html">Attendance Logs</a>
+            <a href="input-marks_2.html">Input Marks</a>
+            <a href="results_5.html">Results Feed</a>
+            <a href="teacher-chat_2.html">Teacher Chat</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="register-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="color: #001e46; margin-bottom: 5px;">Daily Class Register</h2>
+                <button id="toggleOpsBtn" class="ops-badge">Ops Unit Mode: OFF (60k=1)</button>
+            </div>
+            <p id="saverStatus" style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Fetching student roster...</p>
+
+            <div class="date-selection-box">
+                <label for="registerDate">Select Marking Date:</label>
+                <input type="date" id="registerDate">
+            </div>
+
+            <form id="attendanceForm">
+                <div id="studentsRegisterContainer"></div>
+                <button type="submit" class="btn-submit">🔒 Save Register for Selected Date</button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let convertOps = false;
+        const toggleBtn = document.getElementById("toggleOpsBtn");
+        toggleBtn.addEventListener("click", () => {
+            convertOps = !convertOps;
+            toggleBtn.innerText = `Ops Unit Mode: ${convertOps ? 'ON' : 'OFF'} (60k=1)`;
+            updateSaverStatus();
+        });
+
+        function formatOpsCount(count) {
+            if (!convertOps) return count;
+            const units = count / 60000;
+            return units < 0.01 ? `${count} ops` : `${units.toFixed(2)} Ops Unit(s)`;
+        }
+
+        let activeClass = "";
+        let loadedStudents = [];
+        let totalWriteOps = 0;
+
+        const dateInput = document.getElementById("registerDate");
+        dateInput.value = new Date().toISOString().split("T")[0];
+
+        document.getElementById("mobileMenuBtn").addEventListener("click", () => {
+            document.getElementById("navLinksContainer").classList.toggle("active");
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "teacher-signin.html"; return; }
+            const teacherDoc = await getDoc(doc(db, "teachers", user.uid));
+            if (!teacherDoc.exists()) return;
+
+            activeClass = teacherDoc.data().assignedClass || "Form 1";
+            await loadStudents();
+        });
+
+        dateInput.addEventListener("change", renderStudentRows);
+
+        async function loadStudents() {
+            const q = query(collection(db, "students"), where("assignedClass", "==", activeClass));
+            const snapshot = await getDocs(q);
+            loadedStudents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderStudentRows();
+        }
+
+        function updateSaverStatus() {
+            const selectedDate = dateInput.value;
+            document.getElementById('saverStatus').innerText = `Register for ${activeClass} - Date: ${selectedDate} | Writes Performed: ${formatOpsCount(totalWriteOps)}`;
+        }
+
+        function renderStudentRows() {
+            const container = document.getElementById("studentsRegisterContainer");
+            container.innerHTML = "";
+
+            const selectedDate = dateInput.value;
+
+            if (loadedStudents.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b;">No students found registered under ${activeClass}.</div>`;
+                return;
+            }
+
+            loadedStudents.forEach(s => {
+                const history = s.attendanceHistory || [];
+                const existingRecord = history.find(h => h.date === selectedDate);
+                const currentStatus = existingRecord ? existingRecord.status : "Present";
+
+                const div = document.createElement("div");
+                div.className = "student-row";
+                div.innerHTML = `
+                    <div class="student-info">
+                        <img src="${s.profilePicUrl || 'https://via.placeholder.com/150'}" class="student-avatar" alt="Avatar">
+                        <div>
+                            <strong>${s.name}</strong><br>
+                            <small style="color:#64748b;">${s.gender || 'N/A'}</small>
+                        </div>
+                    </div>
+                    <div class="radio-options">
+                        <label><input type="radio" name="att_${s.id}" value="Present" ${currentStatus === "Present" ? "checked" : ""}> Present</label>
+                        <label><input type="radio" name="att_${s.id}" value="Absent" ${currentStatus === "Absent" ? "checked" : ""}> Absent</label>
+                        <label><input type="radio" name="att_${s.id}" value="Late" ${currentStatus === "Late" ? "checked" : ""}> Late</label>
+                        <label><input type="radio" name="att_${s.id}" value="Sick" ${currentStatus === "Sick" ? "checked" : ""}> Sick</label>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            updateSaverStatus();
+        }
+
+        document.getElementById("attendanceForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const selectedDate = dateInput.value;
+            if (!selectedDate) {
+                alert("Please select a date first.");
+                return;
+            }
+
+            const btn = e.target.querySelector("button");
+            btn.innerText = "⏳ Saving Register...";
+            btn.disabled = true;
+
+            try {
+                let currentWrites = 0;
+                for (const s of loadedStudents) {
+                    const selectedRadio = document.querySelector(`input[name="att_${s.id}"]:checked`);
+                    if (!selectedRadio) continue;
+                    const choice = selectedRadio.value;
+
+                    let history = s.attendanceHistory || [];
+                    history = history.filter(h => h.date !== selectedDate);
+                    history.push({ date: selectedDate, status: choice });
+
+                    await updateDoc(doc(db, "students", s.id), {
+                        attendanceStatus: choice,
+                        attendanceHistory: history
+                    });
+                    currentWrites++;
+                }
+
+                totalWriteOps += currentWrites;
+                alert(`Register for ${selectedDate} saved! DB Writes performed: ${formatOpsCount(currentWrites)}`);
+                await loadStudents();
+            } catch (err) {
+                console.error("Save error:", err);
+                alert("Failed to save register: " + err.message);
+            } finally {
+                btn.innerText = "🔒 Save Register for Selected Date";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

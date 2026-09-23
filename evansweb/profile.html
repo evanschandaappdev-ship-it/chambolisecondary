@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="responsive.css">
+    <title>Student Account Settings - Chamboli Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: #f4f7f6; animation: pageOpen 1s ease; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+        @keyframes pageOpen { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; opacity: 0.15; background-image: url("school1.jpg"); }
+
+        nav { 
+            min-height: 85px; 
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95)); 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 10px 5%; 
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); 
+        }
+        .logo { font-size: 26px; font-weight: 800; background: linear-gradient(45deg, #ffffff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s; padding: 10px 18px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+        .nav-links a:hover, .nav-links a.active { color: white; background: rgba(0, 140, 255, 0.25); border-color: rgba(0, 140, 255, 0.4); }
+
+        main { flex: 1; padding: 30px 5%; max-width: 900px; margin: 0 auto; width: 100%; }
+        
+        .profile-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.5); }
+        .profile-header { display: flex; gap: 25px; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+        
+        .profile-pic { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid #0072ff; box-shadow: 0 8px 16px rgba(0,114,255,0.2); background-color: #e2e8f0; }
+        .profile-title h2 { color: #001e46; font-size: 24px; }
+        .profile-title p { color: #64748b; font-size: 14px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-weight: 700; color: #334155; font-size: 13px; }
+        .form-control { padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; background-color: #fff; }
+        .form-control:focus { border-color: #008cff; box-shadow: 0 0 0 3px rgba(0, 140, 255, 0.15); }
+
+        .btn-save { margin-top: 25px; background: #008cff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s; }
+        .btn-save:hover { background: #0066cc; }
+
+        .logout-btn { background: #ef4444 !important; color: white !important; cursor: pointer; }
+
+        footer { margin-top: auto; background-color: #001e46; color: white; padding: 20px 5%; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="slideshow"></div>
+    <nav>
+        <div class="logo">Student Portal</div>
+        <div class="nav-links">
+            <a href="student-profile.html">Performance Profile</a>
+            <a href="profile.html" class="active">Edit Profile</a>
+            <a href="results_3.html">Results Feed</a>
+            <a href="#" class="logout-btn" id="logoutBtn">Sign Out</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="profile-card">
+            <div class="profile-header">
+                <img id="profileImage" src="https://ui-avatars.com/api/?name=Student&background=0D8ABC&color=fff&size=128" class="profile-pic" alt="Avatar">
+                <div class="profile-title">
+                    <h2 id="dispStudentName">Loading Details...</h2>
+                    <p id="dispStudentEmail">student@chamboli.edu.zm</p>
+                </div>
+            </div>
+
+            <form id="profileEditForm">
+                <h3 style="color:#001e46; margin-bottom:15px; font-size:16px;">Edit Personal Details</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Student Name</label>
+                        <input type="text" id="editName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="editEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="editPhone" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned Grade / Class Stream</label>
+                        <select id="editClass" class="form-control" required>
+                            <option value="" disabled selected>-- Select Class Stream --</option>
+                            <optgroup label="Form 1">
+                                <option value="Form 1 A">Form 1 A</option>
+                                <option value="Form 1 B">Form 1 B</option>
+                                <option value="Form 1 C">Form 1 C</option>
+                                <option value="Form 1 D">Form 1 D</option>
+                                <option value="Form 1 H">Form 1 H</option>
+                                <option value="Form 1 M">Form 1 M</option>
+                                <option value="Form 1 O">Form 1 O</option>
+                            </optgroup>
+                            <optgroup label="Form 2">
+                                <option value="Form 2 C">Form 2 C</option>
+                                <option value="Form 2 H">Form 2 H</option>
+                                <option value="Form 2 A">Form 2 A</option>
+                                <option value="Form 2 M">Form 2 M</option>
+                                <option value="Form 2 B">Form 2 B</option>
+                                <option value="Form 2 O">Form 2 O</option>
+                            </optgroup>
+                            <optgroup label="Grade 10">
+                                <option value="Grade 10 C">Grade 10 C</option>
+                                <option value="Grade 10 H">Grade 10 H</option>
+                                <option value="Grade 10 A">Grade 10 A</option>
+                                <option value="Grade 10 M">Grade 10 M</option>
+                                <option value="Grade 10 B">Grade 10 B</option>
+                                <option value="Grade 10 O">Grade 10 O</option>
+                            </optgroup>
+                            <optgroup label="Grade 11">
+                                <option value="Grade 11 C">Grade 11 C</option>
+                                <option value="Grade 11 H">Grade 11 H</option>
+                                <option value="Grade 11 A">Grade 11 A</option>
+                                <option value="Grade 11 M">Grade 11 M</option>
+                                <option value="Grade 11 B">Grade 11 B</option>
+                                <option value="Grade 11 O">Grade 11 O</option>
+                            </optgroup>
+                            <optgroup label="Grade 12">
+                                <option value="Grade 12 C">Grade 12 C</option>
+                                <option value="Grade 12 H">Grade 12 H</option>
+                                <option value="Grade 12 A">Grade 12 A</option>
+                                <option value="Grade 12 M">Grade 12 M</option>
+                                <option value="Grade 12 B">Grade 12 B</option>
+                                <option value="Grade 12 O">Grade 12 O</option>
+                            </optgroup>
+                            <optgroup label="Senior Purge Streams">
+                                <option value="Form 7">Form 7</option>
+                                <option value="Grade 13">Grade 13</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save" id="saveBtn">Save Changes</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div>&copy; 2026 Chamboli High School Student Portal</div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUserDoc = null;
+
+        function getCATYear() {
+            const now = new Date();
+            const catTime = new Date(now.getTime() + (2 * 60 * 60 * 1000));
+            return catTime.getUTCFullYear();
+        }
+
+        function incrementClassString(currentClass) {
+            if (!currentClass) return currentClass;
+            return currentClass.replace(/(\d+)/, (match) => parseInt(match, 10) + 1);
+        }
+
+        async function checkAndPurgeSeniorStudent(docData) {
+            const cls = (docData.assignedClass || "").toLowerCase().trim();
+            if (cls.includes("form 7") || cls.includes("form7") || cls.includes("grade 13") || cls.includes("grade13")) {
+                alert("NOTICE: Permanent account deletion triggered because student reached Form 7 / Grade 13.");
+                try {
+                    await deleteDoc(doc(db, "students", docData.uid));
+                    if (auth.currentUser) await auth.currentUser.delete();
+                } catch (e) {
+                    console.error("Purge error:", e);
+                }
+                await signOut(auth);
+                window.location.href = "signin.html";
+                return true;
+            }
+            return false;
+        }
+
+        async function processAutoPromotion(user, studentData) {
+            const currentCatYear = getCATYear();
+            const lastPromotedYear = studentData.lastPromotedYear || 2025;
+
+            if (currentCatYear > lastPromotedYear) {
+                const nextClass = incrementClassString(studentData.assignedClass || "");
+                const updatePayload = {
+                    assignedClass: nextClass,
+                    lastPromotedYear: currentCatYear
+                };
+
+                await updateDoc(doc(db, "students", user.uid), updatePayload);
+                studentData.assignedClass = nextClass;
+                studentData.lastPromotedYear = currentCatYear;
+            }
+            return studentData;
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
+
+            const studentRef = doc(db, "students", user.uid);
+            const snap = await getDoc(studentRef);
+
+            if (snap.exists()) {
+                currentUserDoc = snap.data();
+
+                currentUserDoc = await processAutoPromotion(user, currentUserDoc);
+
+                if (await checkAndPurgeSeniorStudent(currentUserDoc)) return;
+
+                const name = currentUserDoc.name || "Student User";
+                const email = currentUserDoc.email || user.email;
+
+                document.getElementById("dispStudentName").innerText = name;
+                document.getElementById("dispStudentEmail").innerText = email;
+
+                document.getElementById("editName").value = name;
+                document.getElementById("editEmail").value = email;
+                document.getElementById("editPhone").value = currentUserDoc.phone || currentUserDoc.parentLine || "";
+                
+                const selectElement = document.getElementById("editClass");
+                const currentClass = currentUserDoc.assignedClass || "";
+                if (currentClass) {
+                    let matched = false;
+                    for (let i = 0; i < selectElement.options.length; i++) {
+                        if (selectElement.options[i].value.toLowerCase() === currentClass.toLowerCase()) {
+                            selectElement.selectedIndex = i;
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched) {
+                        const newOption = new Option(currentClass, currentClass, true, true);
+                        selectElement.add(newOption);
+                    }
+                }
+
+                const imgElement = document.getElementById("profileImage");
+                const imageUrl = currentUserDoc.photoURL || currentUserDoc.profileImage || currentUserDoc.imageUrl || currentUserDoc.avatar || user.photoURL;
+
+                if (imageUrl) {
+                    imgElement.src = imageUrl;
+                } else {
+                    const encodedName = encodeURIComponent(name);
+                    imgElement.src = `https://ui-avatars.com/api/?name=${encodedName}&background=008cff&color=fff&size=128`;
+                }
+
+                imgElement.onerror = () => {
+                    imgElement.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=008cff&color=fff&size=128`;
+                };
+            }
+        });
+
+        document.getElementById("profileEditForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const sec = currentUserDoc?.securityQuestions;
+            if (sec) {
+                const ans1 = prompt(`Security Verification (1/2):\n${sec.q1}`);
+                if (!ans1 || ans1.trim().toLowerCase() !== sec.a1) {
+                    alert("Incorrect answer to Security Question 1. Profile edit canceled.");
+                    return;
+                }
+
+                const ans2 = prompt(`Security Verification (2/2):\n${sec.q2}`);
+                if (!ans2 || ans2.trim().toLowerCase() !== sec.a2) {
+                    alert("Incorrect answer to Security Question 2. Profile edit canceled.");
+                    return;
+                }
+            } else {
+                alert("No security questions found on account. Editing directly.");
+            }
+
+            const saveBtn = document.getElementById("saveBtn");
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Saving Changes...";
+
+            const newName = document.getElementById("editName").value.trim();
+            const newEmail = document.getElementById("editEmail").value.trim();
+            const newPhone = document.getElementById("editPhone").value.trim();
+            const newClass = document.getElementById("editClass").value;
+
+            try {
+                const user = auth.currentUser;
+                const currentClass = currentUserDoc?.assignedClass || "";
+                const isClassChanging = newClass.toLowerCase() !== currentClass.toLowerCase();
+
+                const updatedData = {
+                    name: newName,
+                    email: newEmail,
+                    phone: newPhone
+                };
+
+                if (isClassChanging) {
+                    updatedData.requestedClass = newClass;
+                    updatedData.status = "Pending Transfer";
+                } else {
+                    updatedData.assignedClass = newClass;
+                }
+
+                await updateDoc(doc(db, "students", user.uid), updatedData);
+
+                if (await checkAndPurgeSeniorStudent({ ...updatedData, assignedClass: newClass, uid: user.uid })) return;
+
+                if (isClassChanging) {
+                    alert(`Class transfer request sent directly to ${newClass} teacher's dashboard for approval!`);
+                } else {
+                    alert("Profile details updated successfully!");
+                }
+                window.location.reload();
+            } catch (err) {
+                console.error(err);
+                alert("Save Error: " + err.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Save Changes";
+            }
+        });
+
+        document.getElementById("logoutBtn").onclick = async () => {
+            if (confirm("Sign out of student account?")) {
+                await signOut(auth);
+                window.location.href = "signin.html";
+            }
+        };
+    </script>
+</body>
+</html>

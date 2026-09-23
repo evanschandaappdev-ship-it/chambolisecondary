@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Student List - Chamboli Portal</title>
+    <link rel="stylesheet" href="responsive.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: #f4f7f6; min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+        
+        nav { 
+            min-height: 85px; 
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95)); 
+            color: white; display: flex; align-items: center; justify-content: space-between; padding: 10px 5%; 
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+        }
+        .logo { font-size: 26px; font-weight: 800; background: linear-gradient(45deg, #ffffff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 12px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 14px; font-weight: 500; }
+        .nav-links a:hover, .nav-links a.active { background: rgba(255, 255, 255, 0.2); }
+
+        .container { width: 92%; max-width: 1200px; margin: 30px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .header-actions h2 { color: #001e46; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #001e46; font-weight: 700; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+        .remark-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; }
+        .remark-excellent { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .remark-late { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+        .remark-absent { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .remark-regular { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+        
+        .ops-badge { font-size: 11px; background: rgba(0,140,255,0.15); color: #008cff; padding: 2px 8px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(0,140,255,0.3); }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Chamboli Staff</div>
+        <div class="nav-links">
+            <a href="teacher-dashboard_3.html">Dashboard</a>
+            <a href="student-list_4.html" class="active">Student List</a>
+            <a href="class-register_4.html">Class Register</a>
+            <a href="attendance-insights_4.html">Attendance Logs</a>
+            <a href="input-marks_2.html">Input Marks</a>
+            <a href="results_5.html">Results Feed</a>
+            <a href="teacher-chat_2.html">Teacher Chat</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-actions">
+            <div>
+                <h2>Managed Class Roster</h2>
+                <small id="classLabel" style="color: #64748b;">Loading assigned class...</small>
+            </div>
+            <div>
+                <button id="toggleOpsBtn" class="ops-badge">Ops Unit Mode: OFF (60k=1)</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>Full Name</th>
+                    <th>Email Address</th>
+                    <th>Gender</th>
+                    <th>Attendance Remark</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+                <tr><td colspan="5" style="text-align: center; color: #64748b;">Fetching student roster...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Firebase Reads/Writes Converter Logic (60,000 Ops = 1 Unit)
+        let convertOps = false;
+        const toggleBtn = document.getElementById("toggleOpsBtn");
+        toggleBtn.addEventListener("click", () => {
+            convertOps = !convertOps;
+            toggleBtn.innerText = `Ops Unit Mode: ${convertOps ? 'ON' : 'OFF'} (60k=1)`;
+            if (window.currentClass) loadStudents(window.currentClass);
+        });
+
+        function formatOpsCount(count) {
+            if (!convertOps) return count;
+            const units = count / 60000;
+            return units < 0.01 ? `${count} ops` : `${units.toFixed(2)} Ops Unit(s)`;
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "teacher-signin.html"; return; }
+            const tSnap = await getDoc(doc(db, "teachers", user.uid));
+            if (tSnap.exists()) {
+                const assignedClass = tSnap.data().assignedClass || "Form 1";
+                window.currentClass = assignedClass;
+                document.getElementById("classLabel").innerText = `Assigned Class: ${assignedClass}`;
+                await loadStudents(assignedClass);
+            }
+        });
+
+        async function loadStudents(assignedClass) {
+            const tbody = document.getElementById("studentTableBody");
+            const q = query(collection(db, "students"), where("assignedClass", "==", assignedClass));
+            const snap = await getDocs(q);
+            tbody.innerHTML = "";
+
+            if (snap.empty) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #64748b;">No students found in ${assignedClass}.</td></tr>`;
+                return;
+            }
+
+            // Track Read operations (1 per student doc read)
+            let readOpsCount = snap.docs.length + 1; 
+
+            snap.forEach(docSnap => {
+                const s = docSnap.data();
+                const history = s.attendanceHistory || [];
+
+                let absentCount = 0;
+                let lateCount = 0;
+                history.forEach(h => {
+                    if (h.status === "Absent") absentCount++;
+                    if (h.status === "Late") lateCount++;
+                });
+
+                let remarkText = "Excellent";
+                let remarkClass = "remark-excellent";
+
+                if (absentCount >= 3) {
+                    remarkText = "Always Absent";
+                    remarkClass = "remark-absent";
+                } else if (lateCount >= 3) {
+                    remarkText = "Always Late";
+                    remarkClass = "remark-late";
+                } else if (history.length === 0) {
+                    remarkText = "Regular";
+                    remarkClass = "remark-regular";
+                }
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><img src="${s.profilePicUrl || 'https://via.placeholder.com/40'}" class="avatar" alt="Avatar"></td>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.email || '--'}</td>
+                    <td>${s.gender || 'N/A'}</td>
+                    <td><span class="remark-badge ${remarkClass}">${remarkText}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById("classLabel").innerText = `Assigned Class: ${assignedClass} | DB Reads: ${formatOpsCount(readOpsCount)}`;
+        }
+    </script>
+</body>
+</html>

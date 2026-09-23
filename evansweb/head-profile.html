@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Profile - Chamboli Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { 
+            background-color: #f4f7f6; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        
+        nav { 
+            min-height: 85px; 
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95)); 
+            color: white; display: flex; align-items: center; justify-content: space-between; padding: 10px 5%;
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+        }
+        .logo { font-size: 26px; font-weight: 800; background: linear-gradient(45deg, #ffffff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 15px; }
+        .nav-links a { color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { background: rgba(0, 140, 255, 0.25); }
+
+        main { flex: 1; padding: 40px 5%; display: flex; justify-content: center; align-items: center; }
+        .profile-card { 
+            background: white; 
+            width: 100%; 
+            max-width: 550px; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            border-top: 5px solid #001e46; 
+            text-align: center; 
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .profile-avatar { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #001e46; margin: 0 auto 20px; background: #e2e8f0; display: block; cursor: pointer; transition: transform 0.2s; }
+        .profile-avatar:hover { transform: scale(1.05); }
+        h2 { color: #001e46; font-size: 24px; font-weight: 800; margin-bottom: 5px; }
+        .role-badge { display: inline-block; background: rgba(0, 30, 70, 0.1); color: #001e46; padding: 5px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; text-transform: uppercase; margin-bottom: 25px; border: 1px solid rgba(0, 30, 70, 0.2); }
+        
+        .info-group { text-align: left; background: #f8fafc; padding: 15px 20px; border-radius: 10px; margin-bottom: 12px; border: 1px solid #e2e8f0; transition: transform 0.2s ease, border-color 0.2s ease; }
+        .info-group:hover { transform: translateX(4px); border-color: #008cff; }
+        .info-label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px; }
+        .info-value { font-size: 15px; font-weight: 600; color: #1e293b; margin-top: 2px; }
+
+        .edit-section { text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .edit-section h3 { font-size: 16px; color: #001e46; margin-bottom: 15px; font-weight: 700; }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: white; transition: border-color 0.2s ease; }
+        .form-control:focus { border-color: #008cff; }
+
+        .btn-save { padding: 12px; background: #001e46; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; width: 100%; transition: background 0.2s, transform 0.1s; }
+        .btn-save:hover { background: #003370; }
+        .btn-save:active { transform: scale(0.98); }
+
+        /* IMAGE PREVIEW MODAL DIALOGUE */
+        .img-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; cursor: pointer; animation: fadeIn 0.2s ease; }
+        .img-modal-card { max-width: 90%; max-height: 85vh; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 3px solid white; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .img-modal-card img { width: 100%; height: 100%; object-fit: contain; max-height: 80vh; display: block; }
+
+        /* KEYFRAME ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes popIn { 
+            from { transform: scale(0.8); opacity: 0; } 
+            to { transform: scale(1); opacity: 1; } 
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Chamboli Executive</div>
+        <div class="nav-links">
+            <a href="headteacher-dashboard.html">Management Desk</a>
+            <a href="headteacher-chat.html">Chat Hub</a>
+            <a href="head-profile.html" class="active">Admin Profile</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="profile-card">
+            <img id="headPic" src="https://via.placeholder.com/150" class="profile-avatar" alt="Head Teacher" title="Click to view full image">
+            <h2 id="headName">Loading Admin Node...</h2>
+            <span class="role-badge">Chief Executive Administrator Account</span>
+
+            <div class="info-group">
+                <div class="info-label">Administrative Email Address</div>
+                <div class="info-value" id="headEmail">---</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Security Management Assignment Role</div>
+                <div class="info-value">Head Teacher (Executive Desk)</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Account Verification Standing</div>
+                <div class="info-value" style="color: #10b981;">Authorized Absolute</div>
+            </div>
+
+            <!-- Edit Details & Security Questions -->
+            <div class="edit-section">
+                <h3>✏️ Update Executive Profile & Security Questions</h3>
+                <form id="editHeadForm">
+                    <div class="form-group">
+                        <label for="editHeadName">Executive Name</label>
+                        <input type="text" id="editHeadName" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editHeadPic">Executive Avatar Image</label>
+                        <input type="file" id="editHeadPic" class="form-control" accept="image/*">
+                    </div>
+
+                    <hr style="margin: 15px 0; border: none; border-top: 1px solid #cbd5e1;">
+                    <h4 style="font-size: 13px; color: #001e46; margin-bottom: 10px;">🛡️ Security Recovery Questions</h4>
+
+                    <div class="form-group">
+                        <label for="editHeadSecQ1">Security Question 1</label>
+                        <select id="editHeadSecQ1" class="form-control" required>
+                            <option value="What was the name of your first primary school?">What was the name of your first primary school?</option>
+                            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                            <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                            <option value="What city or town were you born in?">What city or town were you born in?</option>
+                        </select>
+                        <input type="text" id="editHeadSecA1" class="form-control" required placeholder="Answer to Question 1" style="margin-top: 6px;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editHeadSecQ2">Security Question 2</label>
+                        <select id="editHeadSecQ2" class="form-control" required>
+                            <option value="What is your favorite subject?">What is your favorite subject?</option>
+                            <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+                            <option value="What is the name of your favorite teacher?">What is the name of your favorite teacher?</option>
+                            <option value="What is your favorite food?">What is your favorite food?</option>
+                        </select>
+                        <input type="text" id="editHeadSecA2" class="form-control" required placeholder="Answer to Question 2" style="margin-top: 6px;">
+                    </div>
+
+                    <button type="submit" id="saveHeadBtn" class="btn-save">Update Profile & Security Details</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- FULL IMAGE MODAL DIALOGUE -->
+    <div class="img-modal-overlay" id="imgModal">
+        <div class="img-modal-card">
+            <img id="modalFullImg" src="" alt="Full View">
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const cloudName = "fw9ktj6z";
+        const uploadPreset = "ml_default";
+
+        let currentUserId = null;
+        let existingPicUrl = "";
+
+        const headPic = document.getElementById("headPic");
+        const imgModal = document.getElementById("imgModal");
+        const modalFullImg = document.getElementById("modalFullImg");
+
+        headPic.addEventListener("click", () => {
+            modalFullImg.src = headPic.src;
+            imgModal.style.display = "flex";
+        });
+
+        imgModal.addEventListener("click", () => {
+            imgModal.style.display = "none";
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "headteacher-signin.html"; return; }
+            currentUserId = user.uid;
+
+            const snap = await getDoc(doc(db, "headteachers", user.uid));
+            if(snap.exists()) {
+                const data = snap.data();
+                document.getElementById("headName").innerText = data.name || "Head Teacher";
+                document.getElementById("headEmail").innerText = data.email;
+                document.getElementById("editHeadName").value = data.name || "";
+
+                if (data.securityQuestions) {
+                    if (data.securityQuestions.q1) document.getElementById("editHeadSecQ1").value = data.securityQuestions.q1;
+                    if (data.securityQuestions.a1) document.getElementById("editHeadSecA1").value = data.securityQuestions.a1;
+                    if (data.securityQuestions.q2) document.getElementById("editHeadSecQ2").value = data.securityQuestions.q2;
+                    if (data.securityQuestions.a2) document.getElementById("editHeadSecA2").value = data.securityQuestions.a2;
+                }
+
+                if(data.profilePicUrl) {
+                    headPic.src = data.profilePicUrl;
+                    existingPicUrl = data.profilePicUrl;
+                }
+            } else {
+                document.getElementById("headName").innerText = user.displayName || "School Head Teacher";
+                document.getElementById("headEmail").innerText = user.email;
+                document.getElementById("editHeadName").value = user.displayName || "";
+                if(user.photoURL) {
+                    headPic.src = user.photoURL;
+                    existingPicUrl = user.photoURL;
+                }
+            }
+        });
+
+        document.getElementById("editHeadForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("saveHeadBtn");
+            btn.disabled = true;
+            btn.innerText = "Saving Profile...";
+
+            const newName = document.getElementById("editHeadName").value.trim();
+            const fileInput = document.getElementById("editHeadPic");
+
+            const q1 = document.getElementById("editHeadSecQ1").value;
+            const a1 = document.getElementById("editHeadSecA1").value.trim();
+            const q2 = document.getElementById("editHeadSecQ2").value;
+            const a2 = document.getElementById("editHeadSecA2").value.trim();
+
+            if (q1 === q2) {
+                alert("Please select two different security questions.");
+                btn.disabled = false;
+                btn.innerText = "Update Profile & Security Details";
+                return;
+            }
+
+            try {
+                let imageUrl = existingPicUrl;
+                if (fileInput.files.length > 0) {
+                    btn.innerText = "Uploading Media...";
+                    const file = fileInput.files[0];
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("upload_preset", uploadPreset);
+
+                    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                        method: "POST",
+                        body: formData
+                    });
+                    if (!res.ok) throw new Error("Cloud sync failed.");
+                    const cloudData = await res.json();
+                    imageUrl = cloudData.secure_url;
+                }
+
+                await updateDoc(doc(db, "headteachers", currentUserId), {
+                    name: newName,
+                    profilePicUrl: imageUrl,
+                    securityQuestions: {
+                        q1: q1,
+                        a1: a1.toLowerCase(),
+                        q2: q2,
+                        a2: a2.toLowerCase()
+                    }
+                });
+
+                if (auth.currentUser) {
+                    await updateProfile(auth.currentUser, { displayName: newName, photoURL: imageUrl });
+                }
+
+                alert("Executive profile updated successfully!");
+                window.location.reload();
+            } catch (err) {
+                alert("Failed to update profile: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Update Profile & Security Details";
+            }
+        });
+    </script>
+</body>
+</html>

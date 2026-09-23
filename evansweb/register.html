@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Student - Chamboli Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            animation: pageOpen 1s ease;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes pageOpen {
+            from {
+                opacity: 0;
+                transform: scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            background-image: url("school1.jpg");
+        }
+
+        nav {
+            min-height: 85px;
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ffffff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+            background: rgba(0, 140, 255, 0.25);
+            border-color: rgba(0, 140, 255, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 85px;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, rgba(0, 30, 70, 0.98), rgba(0, 60, 120, 0.98));
+                padding: 20px;
+                gap: 15px;
+                border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            z-index: 1;
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 550px;
+            padding: 45px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            color: #0f172a;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .card p {
+            color: #64748b;
+            margin-bottom: 25px;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            width: 100%;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #002d62, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 45, 98, 0.2);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 45, 98, 0.3);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .auth-bottom-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .auth-bottom-link a {
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-bottom-link a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #001e46;
+            color: white;
+            text-align: center;
+            padding: 25px 5%;
+            font-size: 14px;
+            font-weight: 500;
+            border-top: 3px solid #008cff;
+            margin-top: auto;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slideshow"></div>
+
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <button class="menu-toggle" id="mobileMenuBtn">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="navContainer">
+            <a href="index.html">Home</a>
+            <a href="signin.html">Student Hub</a>
+            <a href="register.html" class="active">Student Register</a>
+            <a href="teacher-signin.html">Teacher Workspace</a>
+            <a href="create-account.html">Teacher Setup</a>
+            <a href="headteacher-signin.html">Executive Portal</a>
+            <a href="headteacher-register.html">Executive Setup</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="card">
+            <h2>Student Registration</h2>
+            <p>Create your profile to access student features.</p>
+
+            <form id="studentRegisterForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" required placeholder="Enter student full name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="Enter student email">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="tel" id="phoneNumber" required placeholder="e.g. +260 97 1234567">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Create password">
+                </div>
+                <div class="form-group">
+                    <label for="assignedClass">Assigned Class/Grade</label>
+                    <select id="assignedClass" required>
+                        <option value="" disabled selected>Select Class / Grade...</option>
+
+                        <option value="Form 1 C">Form 1 C</option>
+                        <option value="Form 1 H">Form 1 H</option>
+                        <option value="Form 1 A">Form 1 A</option>
+                        <option value="Form 1 M">Form 1 M</option>
+                        <option value="Form 1 B">Form 1 B</option>
+                        <option value="Form 1 O">Form 1 O</option>
+
+                        <option value="Form 2 C">Form 2 C</option>
+                        <option value="Form 2 H">Form 2 H</option>
+                        <option value="Form 2 A">Form 2 A</option>
+                        <option value="Form 2 M">Form 2 M</option>
+                        <option value="Form 2 B">Form 2 B</option>
+                        <option value="Form 2 O">Form 2 O</option>
+
+                        <option value="Grade 10 C">Grade 10 C</option>
+                        <option value="Grade 10 H">Grade 10 H</option>
+                        <option value="Grade 10 A">Grade 10 A</option>
+                        <option value="Grade 10 M">Grade 10 M</option>
+                        <option value="Grade 10 B">Grade 10 B</option>
+                        <option value="Grade 10 O">Grade 10 O</option>
+
+                        <option value="Grade 11 C">Grade 11 C</option>
+                        <option value="Grade 11 H">Grade 11 H</option>
+                        <option value="Grade 11 A">Grade 11 A</option>
+                        <option value="Grade 11 M">Grade 11 M</option>
+                        <option value="Grade 11 B">Grade 11 B</option>
+                        <option value="Grade 11 O">Grade 11 O</option>
+
+                        <option value="Grade 12 C">Grade 12 C</option>
+                        <option value="Grade 12 H">Grade 12 H</option>
+                        <option value="Grade 12 A">Grade 12 A</option>
+                        <option value="Grade 12 M">Grade 12 M</option>
+                        <option value="Grade 12 B">Grade 12 B</option>
+                        <option value="Grade 12 O">Grade 12 O</option>
+                    </select>
+                </div>
+
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+                <h3 style="font-size: 15px; color: #002d62; margin-bottom: 12px;">🛡️ Account Security Questions</h3>
+
+                <div class="form-group">
+                    <label for="secQ1">Security Question 1</label>
+                    <select id="secQ1" required>
+                        <option value="" disabled selected>Select Question 1...</option>
+                        <option value="What was the name of your first primary school?">What was the name of your first primary school?</option>
+                        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                        <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                        <option value="What city or town were you born in?">What city or town were you born in?</option>
+                    </select>
+                    <input type="text" id="secA1" required placeholder="Answer to Question 1">
+                </div>
+
+                <div class="form-group">
+                    <label for="secQ2">Security Question 2</label>
+                    <select id="secQ2" required>
+                        <option value="" disabled selected>Select Question 2...</option>
+                        <option value="What is your favorite subject?">What is your favorite subject?</option>
+                        <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+                        <option value="What is the name of your favorite teacher?">What is the name of your favorite teacher?</option>
+                        <option value="What is your favorite food?">What is your favorite food?</option>
+                    </select>
+                    <input type="text" id="secA2" required placeholder="Answer to Question 2">
+                </div>
+
+                <div class="form-group">
+                    <label for="profilePic">Profile Picture</label>
+                    <input type="file" id="profilePic" accept="image/*">
+                </div>
+                <button type="submit" id="submitBtn" class="btn">Create Student Account</button>
+            </form>
+
+            <div class="auth-bottom-link">
+                Already have a student account? <a href="signin.html">Sign In Here</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 Chamboli Portal. All rights reserved.
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164",
+            measurementId: "G-PZZP7V0G4W"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const cloudName = "fw9ktj6z";
+        const uploadPreset = "ml_default";
+
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const navContainer = document.getElementById("navContainer");
+        if (mobileMenuBtn && navContainer) {
+            mobileMenuBtn.addEventListener("click", () => {
+                navContainer.classList.toggle("active");
+            });
+        }
+
+        const form = document.getElementById("studentRegisterForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const secQ1 = document.getElementById("secQ1").value;
+            const secA1 = document.getElementById("secA1").value.trim();
+            const secQ2 = document.getElementById("secQ2").value;
+            const secA2 = document.getElementById("secA2").value.trim();
+
+            if (secQ1 === secQ2) {
+                alert("Please select two different security questions.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Uploading media asset...";
+
+            const name = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phoneNumber").value.trim();
+            const password = document.getElementById("password").value;
+            const targetClass = document.getElementById("assignedClass").value;
+            const fileInput = document.getElementById("profilePic");
+
+            let imageUrl = "";
+
+            try {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("upload_preset", uploadPreset);
+
+                    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    if (!res.ok) throw new Error("Cloud asset storage link non-responsive.");
+                    const cloudData = await res.json();
+                    imageUrl = cloudData.secure_url;
+                }
+
+                submitBtn.innerText = "Configuring authentication engine node...";
+                const creds = await createUserWithEmailAndPassword(auth, email, password);
+
+                await updateProfile(creds.user, {
+                    displayName: name,
+                    photoURL: imageUrl || null
+                });
+
+                submitBtn.innerText = "Seeding tracking structures...";
+                await setDoc(doc(db, "students", creds.user.uid), {
+                    uid: creds.user.uid,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    assignedClass: targetClass,
+                    status: "Pending",
+                    role: "student",
+                    profilePicUrl: imageUrl,
+                    securityQuestions: {
+                        q1: secQ1,
+                        a1: secA1.toLowerCase(),
+                        q2: secQ2,
+                        a2: secA2.toLowerCase()
+                    },
+                    attendanceStatus: "Present",
+                    attendanceHistory: [],
+                    testRecords: []
+                });
+
+                alert("Student account registered successfully with security questions set!");
+                window.location.href = "profile.html";
+            } catch (err) {
+                console.error(err);
+                alert("Registration execution failed: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Create Student Account";
+            }
+        });
+    </script>
+</body>
+
+</html>

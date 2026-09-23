@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Tracking Logs - Chamboli Portal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: #f4f7f6; min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+
+        nav { 
+            min-height: 85px; 
+            background: linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95)); 
+            color: white; display: flex; align-items: center; justify-content: space-between; padding: 10px 5%; 
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+        }
+        .logo { font-size: 26px; font-weight: 800; background: linear-gradient(45deg, #ffffff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 8px; transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { color: white; background: rgba(0, 140, 255, 0.25); transform: translateY(-1px); }
+
+        main { flex: 1; padding: 30px 5%; width: 100%; max-width: 1200px; margin: 0 auto; }
+        .dashboard-header { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 25px; border-left: 5px solid #008cff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .dashboard-header h1 { color: #001e46; font-size: 24px; font-weight: 800; }
+
+        .filter-controls { display: flex; gap: 12px; align-items: center; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #e2e8f0; flex-wrap: wrap; }
+        .filter-controls label { font-weight: 700; color: #001e46; font-size: 14px; }
+        .filter-controls input[type="date"] { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+
+        .btn-pdf { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-pdf:hover { background: #dc2626; transform: translateY(-2px); }
+
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); overflow-x: auto; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        th { background: #f8fafc; color: #475569; font-weight: 700; font-size: 13px; text-transform: uppercase; }
+
+        .student-profile-cell { display: flex; align-items: center; gap: 12px; }
+        .student-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #008cff; }
+
+        .date-pill { font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 700; display: inline-block; margin: 2px; }
+        .pill-absent { background: #fee2e2; color: #b91c1c; }
+        .pill-late { background: #fef3c7; color: #b45309; }
+        .pill-sick { background: #e0e7ff; color: #3730a3; }
+
+        #pdfPrintContainer { display: none; }
+        .sheet-body { background: white; width: 800px; padding: 25px; margin: 0 auto; color: #001e46; border: 2px solid #002d62; border-radius: 8px; }
+        .sheet-header-top { text-align: center; border-bottom: 3px double #002d62; padding-bottom: 10px; margin-bottom: 15px; }
+        .sheet-header-top h1 { color: #002d62; font-size: 26px; font-weight: 900; letter-spacing: 1px; }
+        .sheet-header-top h3 { color: #0056b3; font-size: 15px; font-weight: 700; }
+        .sheet-title-banner { background: #002d62; color: white; text-align: center; padding: 8px 0; font-weight: 800; font-size: 18px; border-radius: 6px; margin-bottom: 15px; letter-spacing: 2px; }
+        
+        .sheet-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 15px; font-size: 13px; }
+        .sheet-meta-row { display: flex; margin-bottom: 4px; }
+        .sheet-meta-label { width: 140px; font-weight: 700; color: #334155; }
+        .sheet-meta-val { font-weight: 700; color: #001e46; }
+
+        .sheet-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
+        .sheet-table th, .sheet-table td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center; }
+        .sheet-table th { background: #002d62; color: white; font-weight: 700; }
+        .sheet-table td.left { text-align: left; font-weight: 600; }
+
+        .sheet-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-weight: 800; color: white; font-size: 11px; }
+        .badge-present { background: #16a34a; }
+        .badge-absent { background: #dc2626; }
+        .badge-late { background: #d97706; }
+        .badge-sick { background: #4f46e5; }
+
+        .sheet-bottom-grid { display: grid; grid-template-columns: 1fr 1.3fr 1.3fr; gap: 12px; margin-top: 15px; }
+        .sheet-box { border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #fafafa; font-size: 12px; }
+        .sheet-box-title { font-weight: 800; color: #002d62; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 6px; }
+        .stat-row { display: flex; justify-content: space-between; padding: 2px 0; font-weight: 600; }
+
+        .sig-box { text-align: center; margin-top: 8px; border-top: 1px dashed #cbd5e1; padding-top: 4px; }
+        .sig-img { height: 30px; object-fit: contain; display: block; margin: 0 auto 2px auto; }
+        
+        .ops-badge { font-size: 11px; background: rgba(0,140,255,0.15); color: #008cff; padding: 2px 8px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(0,140,255,0.3); }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <div class="nav-links">
+            <a href="teacher-dashboard_3.html">Dashboard</a>
+            <a href="student-list_4.html">Student List</a>
+            <a href="class-register_4.html">Class Register</a>
+            <a href="attendance-insights_4.html" class="active">Attendance Logs</a>
+            <a href="input-marks_2.html">Input Marks</a>
+            <a href="results_5.html">Results Feed</a>
+            <a href="teacher-chat_2.html">Teacher Chat</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="dashboard-header">
+            <div>
+                <h1>Attendance Logs & PDF Export</h1>
+                <p id="saverStatus" style="color: #64748b; font-size: 14px;">Loading saved attendance records...</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <button id="toggleOpsBtn" class="ops-badge">Ops Unit Mode: OFF (60k=1)</button>
+                <button class="btn-pdf" id="generatePdfBtn">📄 Download Register PDF</button>
+            </div>
+        </div>
+
+        <div class="filter-controls">
+            <label for="filterDate">Select Date for Register Export:</label>
+            <input type="date" id="filterDate">
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Profile</th>
+                        <th>Status on Selected Date</th>
+                        <th>All Attendance Incidents Recorded</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceLogsBody">
+                    <tr><td colspan="3" style="text-align: center; color: #64748b;">Loading logs...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="pdfPrintContainer">
+        <div class="sheet-body" id="sheetArea">
+            <div class="sheet-header-top">
+                <h1>CHAMBOLI SECONDARY SCHOOL</h1>
+                <h3>Knowledge • Discipline • Success</h3>
+            </div>
+
+            <div class="sheet-title-banner">CLASS REGISTER</div>
+
+            <div class="sheet-meta-grid">
+                <div>
+                    <div class="sheet-meta-row"><span class="sheet-meta-label">Class:</span><span class="sheet-meta-val" id="pdfClass">--</span></div>
+                    <div class="sheet-meta-row"><span class="sheet-meta-label">Term:</span><span class="sheet-meta-val">2nd Term</span></div>
+                    <div class="sheet-meta-row"><span class="sheet-meta-label">Academic Year:</span><span class="sheet-meta-val">2025 - 2026</span></div>
+                </div>
+                <div>
+                    <div class="sheet-meta-row"><span class="sheet-meta-label">Class Teacher:</span><span class="sheet-meta-val" id="pdfTeacher">Mr. M. Phiri</span></div>
+                    <div class="sheet-meta-row"><span class="sheet-meta-label">Head of School:</span><span class="sheet-meta-val" id="pdfHeadName">--</span></div>
+                </div>
+            </div>
+
+            <table class="sheet-table">
+                <thead>
+                    <tr>
+                        <th style="width: 35px;">No.</th>
+                        <th style="width: 110px;">Admission No.</th>
+                        <th>Student Name</th>
+                        <th style="width: 75px;">Gender</th>
+                        <th style="width: 110px;">Phone No.</th>
+                        <th style="width: 85px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="pdfTableBody">
+                </tbody>
+            </table>
+
+            <div class="sheet-bottom-grid">
+                <div class="sheet-box">
+                    <div class="sheet-box-title">📊 Class Summary</div>
+                    <div class="stat-row"><span>Total Students:</span><span id="pdfTotal">0</span></div>
+                    <div class="stat-row"><span>Male:</span><span id="pdfMale">0</span></div>
+                    <div class="stat-row"><span>Female:</span><span id="pdfFemale">0</span></div>
+                    <div class="stat-row"><span>Present:</span><span id="pdfPresent">0</span></div>
+                    <div class="stat-row"><span>Absent:</span><span id="pdfAbsent">0</span></div>
+                    <div class="stat-row"><span>Late:</span><span id="pdfLate">0</span></div>
+                </div>
+
+                <div class="sheet-box">
+                    <div class="sheet-box-title">💬 Teacher's Comment</div>
+                    <p style="font-size: 11px; font-style: italic; color: #334155;" id="pdfTeacherComment">The class has shown good progress this term. Students are cooperating well and displaying a positive attitude towards learning.</p>
+                    <div class="sig-box">
+                        <span id="pdfTeacherFooter">Mr. M. Phiri</span><br>
+                        <span style="font-size: 10px; color: #64748b;">Class Teacher</span>
+                    </div>
+                </div>
+
+                <div class="sheet-box">
+                    <div class="sheet-box-title">👤 Head of School's Remarks</div>
+                    <p style="font-size: 11px; font-style: italic; color: #334155;" id="pdfHeadComment">Well managed class with good discipline and consistent attendance. Continue with the same effort.</p>
+                    <div class="sig-box">
+                        <img id="pdfHeadSigImg" class="sig-img" src="" alt="Head Teacher Signature">
+                        <span id="pdfHeadFooter">--</span><br>
+                        <span style="font-size: 10px; color: #64748b;">Head of School</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 15px; font-size: 11px; font-weight: 700; color: #0056b3; border-top: 1px solid #cbd5e1; padding-top: 8px;">
+                Date: <span id="pdfDateLabel">--</span> | Together for a Brighter Future | Chamboli Secondary School
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let convertOps = false;
+        const toggleBtn = document.getElementById("toggleOpsBtn");
+        toggleBtn.addEventListener("click", () => {
+            convertOps = !convertOps;
+            toggleBtn.innerText = `Ops Unit Mode: ${convertOps ? 'ON' : 'OFF'} (60k=1)`;
+            if (activeTeacher) loadLogs(activeTeacher.assignedClass || "Form 1");
+        });
+
+        function formatOpsCount(count) {
+            if (!convertOps) return count;
+            const units = count / 60000;
+            return units < 0.01 ? `${count} ops` : `${units.toFixed(2)} Ops Unit(s)`;
+        }
+
+        let activeTeacher = null;
+        let studentsList = [];
+        let totalReadOps = 0;
+        let randomHeadTeacher = { name: "Mrs. L. Banda", signatureUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 45' width='160' height='45'><path d='M10,28 C25,8 35,38 45,18 C50,8 65,32 75,22 C82,15 88,35 100,20 C110,10 120,28 135,15 C142,8 148,22 155,18 M30,28 L115,28' stroke='%230f3c8a' stroke-width='2.5' fill='none'/></svg>" };
+
+        const filterDateInput = document.getElementById("filterDate");
+        filterDateInput.value = new Date().toISOString().split("T")[0];
+
+        async function fetchRandomHeadTeacher() {
+            try {
+                const snap = await getDocs(collection(db, "headteachers"));
+                totalReadOps += snap.docs.length;
+                if (!snap.empty) {
+                    const docs = snap.docs;
+                    const randomDoc = docs[Math.floor(Math.random() * docs.length)].data();
+                    randomHeadTeacher = {
+                        name: randomDoc.name || randomDoc.fullName || "Mrs. L. Banda",
+                        signatureUrl: randomDoc.signatureUrl || randomDoc.signature || randomHeadTeacher.signatureUrl
+                    };
+                }
+            } catch (e) {
+                console.warn("Using default Head Teacher fallback:", e);
+            }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "teacher-signin.html"; return; }
+            
+            await fetchRandomHeadTeacher();
+
+            const tSnap = await getDoc(doc(db, "teachers", user.uid));
+            totalReadOps++;
+            if (tSnap.exists()) {
+                activeTeacher = tSnap.data();
+                await loadLogs(activeTeacher.assignedClass || "Form 1");
+            }
+        });
+
+        filterDateInput.addEventListener("change", renderLogTable);
+
+        async function loadLogs(assignedClass) {
+            const q = query(collection(db, "students"), where("assignedClass", "==", assignedClass));
+            const snap = await getDocs(q);
+            totalReadOps += snap.docs.length;
+            studentsList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderLogTable();
+            document.getElementById('saverStatus').innerText = `Displaying logs for ${assignedClass} | Reads: ${formatOpsCount(totalReadOps)}`;
+        }
+
+        function renderLogTable() {
+            const tbody = document.getElementById("attendanceLogsBody");
+            tbody.innerHTML = "";
+
+            const targetDate = filterDateInput.value;
+
+            if (studentsList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#64748b;">No student records found.</td></tr>`;
+                return;
+            }
+
+            studentsList.forEach(s => {
+                const history = s.attendanceHistory || [];
+                const dayEntry = history.find(h => h.date === targetDate);
+                const currentStatus = dayEntry ? dayEntry.status : "Not Marked";
+
+                let pillsHTML = history.map(h => {
+                    let badgeClass = "pill-absent";
+                    if (h.status === "Late") badgeClass = "pill-late";
+                    if (h.status === "Sick") badgeClass = "pill-sick";
+                    return `<span class="date-pill ${badgeClass}">${h.date}: ${h.status}</span>`;
+                }).join(" ");
+
+                if (!pillsHTML) pillsHTML = `<span style="color:#10b981; font-size:12px;">No incidents recorded yet</span>`;
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <div class="student-profile-cell">
+                            <img src="${s.profilePicUrl || 'https://via.placeholder.com/150'}" class="student-avatar" alt="Avatar">
+                            <div>
+                                <strong>${s.name}</strong><br>
+                                <small style="color:#64748b;">${s.phone || 'No Phone'}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td><strong>${currentStatus}</strong></td>
+                    <td><div>${pillsHTML}</div></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById("generatePdfBtn").addEventListener("click", async () => {
+            const selectedDate = filterDateInput.value;
+            const pdfTableBody = document.getElementById("pdfTableBody");
+            pdfTableBody.innerHTML = "";
+
+            let countTotal = studentsList.length;
+            let countMale = 0;
+            let countFemale = 0;
+            let countPresent = 0;
+            let countAbsent = 0;
+            let countLate = 0;
+
+            studentsList.forEach((s, idx) => {
+                const gender = s.gender || (idx % 2 === 0 ? "Male" : "Female");
+                if (gender.toLowerCase().startsWith("m")) countMale++; else countFemale++;
+
+                const history = s.attendanceHistory || [];
+                const record = history.find(h => h.date === selectedDate);
+                const status = record ? record.status : "Present";
+
+                if (status === "Present") countPresent++;
+                else if (status === "Absent") countAbsent++;
+                else if (status === "Late") countLate++;
+
+                let badgeClass = "badge-present";
+                if (status === "Absent") badgeClass = "badge-absent";
+                if (status === "Late") badgeClass = "badge-late";
+                if (status === "Sick") badgeClass = "badge-sick";
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td>CS/2026/${String(idx + 1).padStart(3, '0')}</td>
+                    <td class="left">${s.name}</td>
+                    <td>${gender}</td>
+                    <td>${s.phone || '097' + Math.floor(1000000 + Math.random() * 9000000)}</td>
+                    <td><span class="sheet-badge ${badgeClass}">${status}</span></td>
+                `;
+                pdfTableBody.appendChild(tr);
+            });
+
+            document.getElementById("pdfClass").innerText = activeTeacher ? (activeTeacher.assignedClass || "Form 2A") : "Form 2A";
+            document.getElementById("pdfTeacher").innerText = activeTeacher ? (activeTeacher.name || "Mr. M. Phiri") : "Mr. M. Phiri";
+            document.getElementById("pdfTeacherFooter").innerText = activeTeacher ? (activeTeacher.name || "Mr. M. Phiri") : "Mr. M. Phiri";
+
+            document.getElementById("pdfHeadName").innerText = randomHeadTeacher.name;
+            document.getElementById("pdfHeadFooter").innerText = randomHeadTeacher.name;
+            document.getElementById("pdfHeadSigImg").src = randomHeadTeacher.signatureUrl;
+
+            document.getElementById("pdfTotal").innerText = countTotal;
+            document.getElementById("pdfMale").innerText = countMale;
+            document.getElementById("pdfFemale").innerText = countFemale;
+            document.getElementById("pdfPresent").innerText = countPresent;
+            document.getElementById("pdfAbsent").innerText = countAbsent;
+            document.getElementById("pdfLate").innerText = countLate;
+            document.getElementById("pdfDateLabel").innerText = selectedDate;
+
+            const printWrapper = document.getElementById("pdfPrintContainer");
+            printWrapper.style.display = "block";
+
+            const element = document.getElementById("sheetArea");
+            const opt = {
+                margin: 4,
+                filename: `Class_Register_${selectedDate}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            await html2pdf().set(opt).from(element).save();
+            printWrapper.style.display = "none";
+        });
+    </script>
+</body>
+</html>

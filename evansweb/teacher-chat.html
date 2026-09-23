@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="responsive_2.css">
+    <title>Teacher Chat - Chamboli Portal</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: var(--bg-color, #f4f7f6); color: var(--text-primary, #001e46); min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+        nav { min-height: 85px; background: var(--nav-bg, linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95))); color: white; display: flex; align-items: center; justify-content: space-between; padding: 10px 5%; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); border-bottom: 2px solid rgba(0, 140, 255, 0.3); }
+        .logo { font-size: 26px; font-weight: 800; color: white; }
+        .nav-links { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 8px; transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { background: rgba(0, 140, 255, 0.25); color: white; transform: translateY(-1px); }
+        
+        main { flex: 1; display: flex; height: calc(100vh - 85px); background: var(--card-bg, #fff); overflow: hidden; animation: fadeIn 0.5s ease-out; }
+        .sidebar { width: 340px; border-right: 1px solid var(--border-color, #e2e8f0); display: flex; flex-direction: column; background: var(--bg-color, #f8fafc); padding: 15px; overflow-y: auto; }
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--card-bg, #ffffff); }
+        
+        .chat-screens-bar { display: flex; background: #001e46; border-bottom: 2px solid #008cff; }
+        .screen-tab { flex: 1; padding: 12px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 13px; font-weight: 700; cursor: pointer; background: transparent; border: none; transition: all 0.3s ease; }
+        .screen-tab.active { color: #ffffff; background: rgba(0, 140, 255, 0.2); border-bottom: 3px solid #00d2ff; }
+        
+        select, input, button { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color, #e2e8f0); font-size: 14px; outline: none; width: 100%; background: var(--card-bg, white); color: var(--text-primary, black); transition: all 0.2s ease; }
+        select:focus, input:focus { border-color: #008cff; }
+        .contact-card { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; cursor: pointer; background: var(--card-bg, white); border: 1px solid var(--border-color, #e2e8f0); margin-bottom: 8px; transition: all 0.2s ease; }
+        .contact-card:hover { transform: translateX(3px); background: var(--table-row-hover, #f1f5f9); }
+        .contact-card.active { background: #e0f2fe; border-color: #008cff; }
+        .contact-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+        
+        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color, #e2e8f0); font-weight: 700; color: var(--text-primary, #001e46); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .ops-badge { font-size: 11px; background: rgba(0,140,255,0.15); color: #008cff; padding: 6px 10px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(0,140,255,0.3); font-weight: 700; width: auto; }
+
+        .messages-container { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; background: var(--bg-color, #f1f5f9); }
+        .msg-row { display: flex; align-items: flex-end; gap: 8px; max-width: 75%; animation: popIn 0.25s ease-out; }
+        .msg-row.me { align-self: flex-end; flex-direction: row-reverse; }
+        .msg-row.them { align-self: flex-start; }
+        .msg-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .bubble { padding: 12px 16px; border-radius: 16px; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .msg-row.me .bubble { background: #008cff; color: white; border-bottom-right-radius: 2px; }
+        .msg-row.them .bubble { background: var(--card-bg, white); color: var(--text-primary, #1e293b); border-bottom-left-radius: 2px; }
+        .chat-input-bar { padding: 20px; border-top: 1px solid var(--border-color, #e2e8f0); display: flex; gap: 10px; }
+        .send-btn { width: auto; background: #001e46; color: white; border: none; padding: 0 24px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+        .send-btn:hover { background: #003366; transform: translateY(-1px); }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">Chamboli Portal</div>
+        <div class="nav-links">
+            <a href="teacher-dashboard_5.html">Dashboard</a>
+            <a href="student-list_4.html">Students</a>
+            <a href="class-register_4.html">Attendance</a>
+            <a href="attendance-insights_4.html">Attendance Logs</a>
+            <a href="input-marks_4.html">Marks</a>
+            <a href="results_5.html">Results Feed</a>
+            <a href="teacher-chat_4.html" class="active">Chat Hub</a>
+            <button class="theme-toggle-btn" id="themeToggleBtn">🌙 Dark Mode</button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="sidebar">
+            <div style="font-weight:700; margin-bottom:8px; color:var(--text-primary, #001e46);">Target Audience</div>
+            <select id="audienceScope" style="margin-bottom:15px;">
+                <option value="everyone">Global Broadcast</option>
+                <option value="my_class">My Assigned Class</option>
+            </select>
+
+            <div style="font-weight:700; margin-bottom:8px; color:var(--text-primary, #001e46);">Contacts</div>
+            <input type="text" id="contactSearchInput" placeholder="🔍 Search contacts..." autocomplete="off" style="margin-bottom:10px;">
+            <div id="contactsList"></div>
+        </div>
+
+        <div class="chat-area">
+            <div class="chat-screens-bar">
+                <button class="screen-tab" id="tabHead">🎓 Head Teacher Desk</button>
+                <button class="screen-tab active" id="tabTeacher">👨‍🏫 Teachers Channel</button>
+                <button class="screen-tab" id="tabStudent">👨‍🎓 Class Stream</button>
+            </div>
+
+            <div class="chat-header">
+                <span id="chatHeaderTitle">👨‍🏫 Teachers Channel</span>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button id="toggleOpsBtn" class="ops-badge">Ops Unit Mode: OFF (60k=1)</button>
+                    <button id="resetDirectChatBtn" style="display:none; width:auto; padding:6px 12px; font-size:12px; background:var(--border-color, #e2e8f0); color:var(--text-primary, black); border:none; border-radius:6px; cursor:pointer;">Exit Direct Chat</button>
+                </div>
+            </div>
+            <div class="messages-container" id="messagesBox"></div>
+            <form class="chat-input-bar" id="messageForm">
+                <input type="text" id="textInput" placeholder="Type a message..." required autocomplete="off">
+                <button type="submit" class="send-btn">Send</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="theme-toggle.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDoc, doc, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let myProfile = null;
+        let activeScreenTab = "teacher";
+        let activeTargetId = null;
+        let convertOps = false;
+
+        const toggleOpsBtn = document.getElementById("toggleOpsBtn");
+        toggleOpsBtn.addEventListener("click", () => {
+            convertOps = !convertOps;
+            toggleOpsBtn.innerText = `Ops Unit Mode: ${convertOps ? 'ON' : 'OFF'} (60k=1)`;
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+            const userSnap = await getDoc(doc(db, "teachers", user.uid));
+            if (userSnap.exists()) {
+                myProfile = userSnap.data();
+                setupTabs();
+                await loadContacts();
+                listenToMessages();
+            }
+        });
+
+        function setupTabs() {
+            const tabs = [
+                { id: "tabHead", val: "headteacher", title: "🎓 Head Teacher Desk" },
+                { id: "tabTeacher", val: "teacher", title: "👨‍🏫 Teachers Channel" },
+                { id: "tabStudent", val: "student", title: "👨‍🎓 Class Stream" }
+            ];
+            tabs.forEach(t => {
+                document.getElementById(t.id).addEventListener("click", () => {
+                    activeScreenTab = t.val;
+                    activeTargetId = null;
+                    tabs.forEach(x => document.getElementById(x.id).classList.toggle("active", x.val === activeScreenTab));
+                    document.getElementById("chatHeaderTitle").innerText = t.title;
+                    listenToMessages();
+                });
+            });
+        }
+
+        async function loadContacts() {
+            const container = document.getElementById("contactsList");
+            container.innerHTML = "";
+            for (let col of ["teachers", "students", "headteachers"]) {
+                const snap = await getDocs(collection(db, col));
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.uid === myProfile.uid) return;
+                    const card = document.createElement("div");
+                    card.className = "contact-card";
+                    card.innerHTML = `<img src="${data.profilePicUrl || 'https://via.placeholder.com/150'}" class="contact-avatar"><div><strong>${data.name}</strong><br><small>${col.toUpperCase()}</small></div>`;
+                    card.addEventListener("click", () => {
+                        activeTargetId = data.uid;
+                        document.getElementById("chatHeaderTitle").innerText = `Direct Chat: ${data.name}`;
+                        document.getElementById("resetDirectChatBtn").style.display = "inline-block";
+                        listenToMessages();
+                    });
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        document.getElementById("resetDirectChatBtn").addEventListener("click", () => {
+            activeTargetId = null;
+            document.getElementById("resetDirectChatBtn").style.display = "none";
+            document.getElementById("chatHeaderTitle").innerText = "👨‍🏫 Teachers Channel";
+            listenToMessages();
+        });
+
+        function listenToMessages() {
+            const q = query(collection(db, "chats"), orderBy("timestamp", "asc"), limit(100));
+            onSnapshot(q, (snapshot) => {
+                const box = document.getElementById("messagesBox");
+                box.innerHTML = "";
+                snapshot.forEach(docSnap => {
+                    const m = docSnap.data();
+                    let show = false;
+                    if (activeTargetId) {
+                        if (m.scope === "direct" && ((m.senderId === myProfile.uid && m.receiverId === activeTargetId) || (m.senderId === activeTargetId && m.receiverId === myProfile.uid))) show = true;
+                    } else {
+                        if (activeScreenTab === "headteacher" && (m.scope === "everyone" || m.senderRole === "headteacher")) show = true;
+                        if (activeScreenTab === "teacher" && (m.scope === "everyone" || m.scope === "teachers" || m.senderRole === "teacher")) show = true;
+                        if (activeScreenTab === "student" && (m.scope === "class" && m.targetClassCode === myProfile.assignedClass)) show = true;
+                    }
+                    if (show) {
+                        const isMe = m.senderId === myProfile.uid;
+                        const row = document.createElement("div");
+                        row.className = `msg-row ${isMe ? 'me' : 'them'}`;
+                        row.innerHTML = `<img src="${m.senderPhoto || 'https://via.placeholder.com/150'}" class="msg-avatar"><div><small style="font-size:10px; color:var(--text-secondary, #64748b);">${m.senderName} (${m.senderRole})</small><div class="bubble">${m.text}</div></div>`;
+                        box.appendChild(row);
+                    }
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        document.getElementById("messageForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const input = document.getElementById("textInput");
+            if (!input.value.trim()) return;
+
+            const now = new Date();
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + 7);
+
+            let payload = {
+                senderId: myProfile.uid,
+                senderName: myProfile.name,
+                senderRole: "teacher",
+                senderPhoto: myProfile.profilePicUrl || "",
+                text: input.value.trim(),
+                timestamp: Timestamp.fromDate(now),
+                expireAt: Timestamp.fromDate(expireDate),
+                scope: document.getElementById("audienceScope").value === "my_class" ? "class" : "everyone",
+                targetClassCode: myProfile.assignedClass || "General"
+            };
+
+            if (activeTargetId) {
+                payload.scope = "direct";
+                payload.receiverId = activeTargetId;
+            }
+
+            await addDoc(collection(db, "chats"), payload);
+            input.value = "";
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="responsive_2.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Marks - Teacher Workspace</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+        body { background-color: var(--bg-color, #f4f7f6); color: var(--text-primary, #001e46); min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+
+        nav { 
+            min-height: 70px; 
+            background: var(--nav-bg, linear-gradient(135deg, rgba(0, 30, 70, 0.95), rgba(0, 60, 120, 0.95))); 
+            color: white; display: flex; align-items: center; justify-content: space-between; padding: 10px 5%; 
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(0, 140, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        .logo { font-size: 20px; font-weight: 800; color: white; }
+        .nav-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 8px; background: rgba(255,255,255,0.1); transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { background: rgba(0, 140, 255, 0.4); color: white; transform: translateY(-1px); }
+
+        main { flex: 1; padding: 20px 4%; max-width: 800px; margin: 0 auto; width: 100%; animation: fadeIn 0.5s ease-out; }
+
+        .card { background: var(--card-bg, white); color: var(--text-primary, black); border-radius: 14px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; transition: transform 0.2s ease; border: 1px solid var(--border-color, #e2e8f0); }
+        .card:hover { transform: translateY(-2px); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color, #f1f5f9); padding-bottom: 8px; }
+        .card h2 { color: var(--text-primary, #001e46); font-size: 18px; margin: 0; }
+
+        .ops-badge { font-size: 11px; background: rgba(0,140,255,0.15); color: #008cff; padding: 6px 10px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(0,140,255,0.3); font-weight: 700; width: auto; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-primary, #334155); margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 14px; outline: none; background: var(--card-bg, white); color: var(--text-primary, black); transition: all 0.2s ease; }
+        .form-control:focus { border-color: #0072ff; box-shadow: 0 0 8px rgba(0,114,255,0.2); }
+
+        .student-mark-card { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; margin-bottom: 12px; background: var(--card-bg, #fafafa); transition: all 0.2s ease; }
+        .student-mark-card:hover { background: var(--table-row-hover, #f0f7ff); border-color: #008cff; }
+        .student-mark-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .student-info { display: flex; flex-direction: column; gap: 2px; }
+        .student-name { font-weight: 700; color: var(--text-primary, #1e293b); font-size: 14px; }
+        .student-sub { font-size: 11px; color: var(--text-secondary, #64748b); }
+        .score-input { width: 90px; text-align: center; font-weight: bold; font-size: 15px; }
+        .comment-input { width: 100%; padding: 8px 12px; border: 1.5px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 13px; outline: none; background: var(--card-bg, white); color: var(--text-primary, black); resize: vertical; min-height: 40px; }
+
+        .btn-submit { width: 100%; background: linear-gradient(135deg, #0072ff, #00c6ff); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,114,255,0.3); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Teacher Workspace</div>
+        <div class="nav-links">
+            <a href="teacher-dashboard_5.html">Dashboard</a>
+            <a href="student-list_4.html">Student List</a>
+            <a href="class-register_4.html">Attendance</a>
+            <a href="attendance-insights_4.html">Attendance Logs</a>
+            <a href="input-marks_4.html" class="active">Input Marks</a>
+            <a href="results_5.html">Results Feed</a>
+            <a href="teacher-chat_4.html">Chat Hub</a>
+            <button class="theme-toggle-btn" id="themeToggleBtn">🌙 Dark Mode</button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="card">
+            <div class="card-header">
+                <h2>Record Class Assessment Marks</h2>
+                <button id="toggleOpsBtn" class="ops-badge">Ops Unit Mode: OFF (60k=1)</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="termSelect">Academic Term</label>
+                <select id="termSelect" class="form-control">
+                    <option value="Term 1" selected>Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Term 3">Term 3</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="testTypeSelect">Assessment Name</label>
+                <select id="testTypeSelect" class="form-control">
+                    <option value="Monthly Test 1">Monthly Test 1 (Term 1)</option>
+                    <option value="Monthly Test 2">Monthly Test 2 (Term 1)</option>
+                    <option value="End of Term 1">End of Term 1 Exam</option>
+                    <option value="Monthly Test 3">Monthly Test 3 (Term 2)</option>
+                    <option value="Monthly Test 4">Monthly Test 4 (Term 2)</option>
+                    <option value="End of Term 2">End of Term 2 Exam</option>
+                    <option value="Monthly Test 5">Monthly Test 5 (Term 3)</option>
+                    <option value="Monthly Test 6">Monthly Test 6 (Term 3)</option>
+                    <option value="End of Term 3">End of Term 3 Exam</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subjectSelect">Subject</label>
+                <select id="subjectSelect" class="form-control">
+                    <option value="" disabled selected>Select Subject...</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="English Language">English Language</option>
+                    <option value="Integrated Science">Integrated Science</option>
+                    <option value="Social Studies">Social Studies</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Principles of Accounts">Principles of Accounts</option>
+                    <option value="Computer Studies">Computer Studies</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Student Roster Scores & Comments</h2>
+            <div id="studentsListContainer" style="margin-top:15px;">Loading class students...</div>
+            <button id="saveMarksBtn" class="btn-submit" style="margin-top: 15px;">Save & Archive Test Marks</button>
+        </div>
+    </main>
+
+    <script src="theme-toggle.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADOhDuRt3gEdLtVJw1nIfdGCjxvfeWAeo",
+            authDomain: "chambolisecschool.firebaseapp.com",
+            projectId: "chambolisecschool",
+            storageBucket: "chambolisecschool.firebasestorage.app",
+            messagingSenderId: "780031719021",
+            appId: "1:780031719021:web:541a4975cb7c3a626df164"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let activeTeacherClass = null;
+        let convertOps = false;
+
+        const toggleOpsBtn = document.getElementById("toggleOpsBtn");
+        toggleOpsBtn.addEventListener("click", () => {
+            convertOps = !convertOps;
+            toggleOpsBtn.innerText = `Ops Unit Mode: ${convertOps ? 'ON' : 'OFF'} (60k=1)`;
+        });
+
+        const termSelect = document.getElementById("termSelect");
+        const testTypeSelect = document.getElementById("testTypeSelect");
+
+        termSelect.addEventListener("change", () => {
+            const val = termSelect.value;
+            if (val === "Term 1") testTypeSelect.value = "Monthly Test 1";
+            else if (val === "Term 2") testTypeSelect.value = "Monthly Test 3";
+            else if (val === "Term 3") testTypeSelect.value = "Monthly Test 5";
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const teacherDoc = await getDoc(doc(db, "teachers", user.uid));
+                if (teacherDoc.exists()) {
+                    activeTeacherClass = teacherDoc.data().assignedClass;
+                }
+                loadClassStudents(activeTeacherClass);
+            } else {
+                window.location.href = "teacher-signin.html";
+            }
+        });
+
+        async function loadClassStudents(assignedClass) {
+            const container = document.getElementById("studentsListContainer");
+            container.innerHTML = "";
+
+            try {
+                let snap;
+                if (assignedClass) {
+                    const q = query(collection(db, "students"), where("assignedClass", "==", assignedClass));
+                    snap = await getDocs(q);
+                } else {
+                    snap = await getDocs(collection(db, "students"));
+                }
+
+                if (snap.empty) {
+                    container.innerHTML = "<p style='color:var(--text-secondary, #64748b); padding:10px;'>No students found in system roster.</p>";
+                    return;
+                }
+
+                snap.forEach(docSnap => {
+                    const student = docSnap.data();
+                    const displayName = student.name || student.fullName || student.displayName || 'Unnamed Student';
+                    const email = student.email || 'No Email';
+
+                    const card = document.createElement("div");
+                    card.className = "student-mark-card";
+                    card.innerHTML = `
+                        <div class="student-mark-row">
+                            <div class="student-info">
+                                <span class="student-name">${displayName}</span>
+                                <span class="student-sub">${email}</span>
+                            </div>
+                            <input type="number" min="0" max="100" class="form-control score-input student-score-field" data-id="${docSnap.id}" placeholder="0-100">
+                        </div>
+                        <textarea class="comment-input student-comment-field" data-id="${docSnap.id}" placeholder="Enter teacher's comment..."></textarea>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error("Error loading students:", err);
+                container.innerHTML = "<p style='color:#ef4444;'>Failed to load student roster.</p>";
+            }
+        }
+
+        document.getElementById("saveMarksBtn").addEventListener("click", async () => {
+            const activeTerm = termSelect.value;
+            const fullTestName = testTypeSelect.value;
+            const subject = document.getElementById("subjectSelect").value;
+            const inputs = document.querySelectorAll(".student-score-field");
+
+            if (!subject) {
+                alert("Please select a subject first.");
+                return;
+            }
+
+            const saveBtn = document.getElementById("saveMarksBtn");
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Archiving Marks & Comments...";
+
+            try {
+                for (const input of inputs) {
+                    const studentId = input.dataset.id;
+                    const val = input.value.trim();
+                    const commentInput = document.querySelector(`.student-comment-field[data-id="${studentId}"]`);
+                    const teacherComment = commentInput ? commentInput.value.trim() : "";
+
+                    if (val !== "" || teacherComment !== "") {
+                        const parsedScore = val !== "" ? Math.min(100, Math.max(0, parseFloat(val))) : 0;
+                        const ref = doc(db, "students", studentId);
+                        const sSnap = await getDoc(ref);
+
+                        if (sSnap.exists()) {
+                            let records = sSnap.data().testRecords || [];
+
+                            records = records.filter(r => !(r.testType === fullTestName && r.subject === subject));
+
+                            const recordData = { 
+                                testType: fullTestName, 
+                                subject: subject, 
+                                score: parsedScore, 
+                                term: activeTerm,
+                                year: String(new Date().getFullYear()),
+                                date: new Date().toDateString()
+                            };
+
+                            if (teacherComment !== "") {
+                                recordData.teacherComment = teacherComment;
+                            }
+
+                            records.push(recordData);
+
+                            const updatePayload = { testRecords: records };
+                            if (teacherComment !== "") {
+                                updatePayload.teacherComment = teacherComment;
+                            }
+
+                            await updateDoc(ref, updatePayload);
+                        }
+                    }
+                }
+                alert(`Successfully archived marks and comments for "${fullTestName} - ${subject}"!`);
+                window.location.href = "teacher-dashboard_5.html";
+            } catch (err) {
+                console.error(err);
+                alert("Error saving marks: " + err.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Save & Archive Test Marks";
+            }
+        });
+    </script>
+</body>
+</html>
